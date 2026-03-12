@@ -1,0 +1,16 @@
+{
+  "name": "alation-plugins",
+  "owner": {
+    "name": "Alation AI",
+    "email": "alation-ai-squad@alation.com"
+  },
+  "description": "Official Alation plugins for Claude Code",
+  "plugins": [
+    {
+      "name": "alation",
+      "source": "./",
+      "description": "Query data, explore catalogs, configure AI agents, automate workflows, and manage data products",
+      "keywords": ["data-catalog", "data-products", "agents", "workflows", "tools", "alation"]
+    }
+  ]
+}
