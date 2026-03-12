@@ -1,0 +1,65 @@
+{
+  "description": "Query a data product and email the results",
+  "required_params": ["name", "agent_id", "data_product_id", "query", "tool_id", "email", "subject"],
+  "definition": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "type_start",
+        "data": {
+          "inputs": {},
+          "config": {"description": "Entry point"}
+        }
+      },
+      {
+        "id": "query_data",
+        "type": "type_agent",
+        "data": {
+          "inputs": {
+            "message": {
+              "type": "static",
+              "value": "{{QUERY}}"
+            },
+            "data_product_id": {
+              "type": "static",
+              "value": "{{DATA_PRODUCT_ID}}"
+            }
+          },
+          "config": {
+            "agent_id": "{{AGENT_ID}}",
+            "description": "Query data product"
+          }
+        }
+      },
+      {
+        "id": "send_email",
+        "type": "type_tool",
+        "data": {
+          "inputs": {
+            "to": {
+              "type": "static",
+              "value": "{{EMAIL}}"
+            },
+            "subject": {
+              "type": "static",
+              "value": "{{SUBJECT}}"
+            },
+            "body": {
+              "type": "reference",
+              "node_id": "query_data",
+              "output_key": "__agent_output__"
+            },
+            "body_format": {
+              "type": "static",
+              "value": "html"
+            }
+          },
+          "config": {
+            "tool_id": "{{TOOL_ID}}",
+            "description": "Send results via email"
+          }
+        }
+      }
+    ]
+  }
+}

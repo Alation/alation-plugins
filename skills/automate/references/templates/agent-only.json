@@ -1,0 +1,32 @@
+{
+  "description": "Run a single agent (default or custom)",
+  "required_params": ["name", "agent_id", "query"],
+  "definition": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "type_start",
+        "data": {
+          "inputs": {},
+          "config": {"description": "Entry point"}
+        }
+      },
+      {
+        "id": "run_agent",
+        "type": "type_agent",
+        "data": {
+          "inputs": {
+            "message": {
+              "type": "static",
+              "value": "{{QUERY}}"
+            }
+          },
+          "config": {
+            "agent_id": "{{AGENT_ID}}",
+            "description": "Run agent"
+          }
+        }
+      }
+    ]
+  }
+}

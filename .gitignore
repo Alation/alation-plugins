@@ -1,0 +1,11 @@
+.worktrees
+dist/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+venv/
+.venv/
+credentials.local
+.claude/
+.vscode/
