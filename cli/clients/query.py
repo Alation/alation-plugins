@@ -119,6 +119,7 @@ class DataProductQueryClient(AlationClient):
 
         endpoint = f"/api/v1/chats/tool/default/{tool_ref}/stream"
         result: dict[str, Any] = {"content": None, "metadata": None}
+        text_parts: list[str] = []
 
         response = self._stream_request("POST", endpoint, json_data=payload, timeout=timeout_secs)
         for raw_bytes in response:
@@ -141,6 +142,12 @@ class DataProductQueryClient(AlationClient):
                 if kind in ("tool-return", "builtin-tool-return"):
                     result["content"] = part.get("content")
                     result["metadata"] = part.get("metadata")
+                elif kind == "text" and part.get("content"):
+                    text_parts.append(part["content"])
+        # If there is no tool response, check for any text parts
+        # in case there was an unrecoverable error.
+        if result["content"] is None and text_parts:
+            result["content"] = "\n".join(text_parts)
 
         return result
 
