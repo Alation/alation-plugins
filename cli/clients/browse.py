@@ -56,7 +56,10 @@ class BrowseClient(AlationClient):
 
     def get_schema(self, schema_id: int) -> dict[str, Any]:
         """Get a specific schema."""
-        result = self.get(self._api_path(f"/schema/{schema_id}"))
+        results = self.get(self._api_path("/schema/"), {"id": schema_id})
+        if not results:
+            raise ValueError(f"Schema {schema_id} not found")
+        result = results[0]
         result["url"] = url_helper.schema_url(schema_id)
         return cast("dict[str, Any]", result)
 
@@ -85,7 +88,10 @@ class BrowseClient(AlationClient):
 
     def get_table(self, table_id: int) -> dict[str, Any]:
         """Get a specific table."""
-        result = self.get(self._api_path(f"/table/{table_id}"))
+        results = self.get(self._api_path("/table/"), {"id": table_id})
+        if not results:
+            raise ValueError(f"Table {table_id} not found")
+        result = results[0]
         result["url"] = url_helper.table_url(table_id)
         return cast("dict[str, Any]", result)
 
@@ -114,7 +120,10 @@ class BrowseClient(AlationClient):
 
     def get_column(self, column_id: int) -> dict[str, Any]:
         """Get a specific column."""
-        result = self.get(self._api_path(f"/column/{column_id}"))
+        results = self.get(self._api_path("/column/"), {"id": column_id})
+        if not results:
+            raise ValueError(f"Column {column_id} not found")
+        result = results[0]
         result["url"] = url_helper.column_url(column_id)
         return cast("dict[str, Any]", result)
 
