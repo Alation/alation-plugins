@@ -6,8 +6,8 @@ marketplace CRUD, product publishing, and search.
 
 from typing import Any, cast
 
-from .base import AlationClient
 from . import url_helper
+from .base import AlationClient
 
 _API_BASE = "/integration/data-products/api/v1"
 
@@ -28,12 +28,14 @@ class MarketplaceClient(AlationClient):
 
     # --- Marketplace CRUD ---
 
-    def list_marketplaces(self, limit: int = 100, skip: int = 0) -> list[dict[str, Any]]:
+    def list_marketplaces(
+        self, limit: int = 100, skip: int = 0
+    ) -> list[dict[str, Any]]:
         """List all data marketplaces."""
         endpoint = self._api_path("/marketplace/")
         params: dict[str, Any] = {"limit": limit, "skip": skip}
         result = self.get(endpoint, params)
-        marketplaces = result.get("results", result if isinstance(result, list) else [])
+        marketplaces = result.get("data", result if isinstance(result, list) else [])
         for mp in marketplaces:
             mid = mp.get("marketplace_id") or mp.get("id")
             if mid:
@@ -93,7 +95,9 @@ class MarketplaceClient(AlationClient):
         self, marketplace_id: str, product_id: str, version: str | None = None
     ) -> dict[str, Any]:
         """Publish a data product to a marketplace."""
-        endpoint = self._api_path(f"/marketplace/{marketplace_id}/data-product/{product_id}/")
+        endpoint = self._api_path(
+            f"/marketplace/{marketplace_id}/data-product/{product_id}/"
+        )
         params = {"version": version} if version else None
         result = self.post(endpoint, params=params)
         if isinstance(result, dict):
