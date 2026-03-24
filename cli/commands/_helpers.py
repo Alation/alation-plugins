@@ -6,6 +6,15 @@ import sys
 from cli.clients.base import print_error
 
 
+def resolve_positional_or_flag(args, positional: str, flag: str, label: str) -> str:
+    """Return whichever of the positional arg or --flag was provided, or exit."""
+    val = getattr(args, positional, None) or getattr(args, flag, None)
+    if not val:
+        print_error(f"{label} is required")
+        sys.exit(2)
+    return val
+
+
 def read_json_stdin(description: str = "JSON") -> dict | None:
     """Read a JSON object from stdin. Returns None (after printing error) on failure."""
     if sys.stdin.isatty():
