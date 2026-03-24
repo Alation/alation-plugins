@@ -2,13 +2,20 @@
 
 from cli.clients.base import print_json
 from cli.clients.search import SearchClient
+from cli.commands._helpers import resolve_positional_or_flag
 
 
 def register(group_parsers):
+    # We use nargs="?" to support positional or flagged args (--query)
     parser = group_parsers.add_parser("search", help="Search the Alation catalog")
-    parser.add_argument("query", help="Search query")
+    parser.add_argument("query", nargs="?", help="Search query")
+    parser.add_argument("--query", "-q", dest="query_flag", help="Search query")
     parser.add_argument("--limit", "-l", type=int, default=50, help="Max results")
-    parser.add_argument("--type", "-t", help="""Filter by type. Accepted types are:
+    parser.add_argument(
+        "--type",
+        "--otype",
+        "-t",
+        help="""Filter by type. Accepted types are:
 - table
 - procedure
 - function
@@ -50,15 +57,17 @@ def register(group_parsers):
 - policy
 - business_policy
 - policy_group
-    """)
+    """,
+    )
     parser.set_defaults(func=cmd_search)
 
 
 def cmd_search(args) -> int:
+    query = resolve_positional_or_flag(args, "query", "query_flag", "query")
     object_types = [args.type] if args.type else None
     with SearchClient() as client:
         result = client.search(
-            args.query,
+            query,
             limit=args.limit,
             object_types=object_types,
         )

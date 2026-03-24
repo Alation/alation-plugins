@@ -4,48 +4,86 @@ import json
 
 from cli.clients.base import print_error, print_json
 from cli.clients.product import DataProductConfigClient
-from cli.commands._helpers import read_json_stdin
+from cli.commands._helpers import read_json_stdin, resolve_positional_or_flag
 
 
 def register(group_parsers):
     parser = group_parsers.add_parser("product", help="Manage data product specs")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    # We use nargs="?" to support positional or flagged args (--product)
     list_p = sub.add_parser("list", help="List data products")
     list_p.add_argument("--limit", type=int, default=100, help="Max results")
-    list_p.add_argument("--order-by", default="-ts_updated", help="Order by field (prefix with - for descending)")
+    list_p.add_argument(
+        "--order-by",
+        default="-ts_updated",
+        help="Order by field (prefix with - for descending)",
+    )
     list_p.set_defaults(func=cmd_list)
 
     get_p = sub.add_parser("get", help="Get data product by ID")
-    get_p.add_argument("product_id", help="Data product ID (e.g. finance:sales)")
+    get_p.add_argument(
+        "product_id", nargs="?", help="Data product ID (e.g. finance:sales)"
+    )
+    get_p.add_argument("--product", "-p", dest="product_flag", help="Data product ID")
     get_p.set_defaults(func=cmd_get)
 
-    sub.add_parser("create", help="Create data product (read JSON spec from stdin)").set_defaults(func=cmd_create)
-    sub.add_parser("update", help="Update data product (read JSON spec from stdin)").set_defaults(func=cmd_update)
+    sub.add_parser(
+        "create", help="Create data product (read JSON spec from stdin)"
+    ).set_defaults(func=cmd_create)
+    sub.add_parser(
+        "update", help="Update data product (read JSON spec from stdin)"
+    ).set_defaults(func=cmd_update)
 
     delete_p = sub.add_parser("delete", help="Delete data product")
-    delete_p.add_argument("product_id", help="Data product ID")
+    delete_p.add_argument("product_id", nargs="?", help="Data product ID")
+    delete_p.add_argument(
+        "--product", "-p", dest="product_flag", help="Data product ID"
+    )
     delete_p.set_defaults(func=cmd_delete)
 
     get_ver_p = sub.add_parser("get-version", help="Get data product version")
-    get_ver_p.add_argument("product_id", help="Data product ID")
-    get_ver_p.add_argument("version_id", help="Version ID (e.g. 1.0.0)")
+    get_ver_p.add_argument("product_id", nargs="?", help="Data product ID")
+    get_ver_p.add_argument(
+        "--product", "-p", dest="product_flag", help="Data product ID"
+    )
+    get_ver_p.add_argument("version_id", nargs="?", help="Version ID (e.g. 1.0.0)")
+    get_ver_p.add_argument("--version", "-v", dest="version_flag", help="Version ID")
     get_ver_p.set_defaults(func=cmd_get_version)
 
-    upd_ver_p = sub.add_parser("update-version", help="Update data product version status")
-    upd_ver_p.add_argument("product_id", help="Data product ID")
-    upd_ver_p.add_argument("version_id", help="Version ID")
-    upd_ver_p.add_argument("--status", required=True, choices=["draft", "ready"], help="New status for the version")
+    upd_ver_p = sub.add_parser(
+        "update-version", help="Update data product version status"
+    )
+    upd_ver_p.add_argument("product_id", nargs="?", help="Data product ID")
+    upd_ver_p.add_argument(
+        "--product", "-p", dest="product_flag", help="Data product ID"
+    )
+    upd_ver_p.add_argument("version_id", nargs="?", help="Version ID")
+    upd_ver_p.add_argument("--version", "-v", dest="version_flag", help="Version ID")
+    upd_ver_p.add_argument(
+        "--status",
+        required=True,
+        choices=["draft", "ready"],
+        help="New status for the version",
+    )
     upd_ver_p.set_defaults(func=cmd_update_version)
 
     del_ver_p = sub.add_parser("delete-version", help="Delete data product version")
-    del_ver_p.add_argument("product_id", help="Data product ID")
-    del_ver_p.add_argument("version_id", help="Version ID")
+    del_ver_p.add_argument("product_id", nargs="?", help="Data product ID")
+    del_ver_p.add_argument(
+        "--product", "-p", dest="product_flag", help="Data product ID"
+    )
+    del_ver_p.add_argument("version_id", nargs="?", help="Version ID")
+    del_ver_p.add_argument("--version", "-v", dest="version_flag", help="Version ID")
     del_ver_p.set_defaults(func=cmd_delete_version)
 
-    check_p = sub.add_parser("check-standards", help="Check data product against standards")
+    check_p = sub.add_parser(
+        "check-standards", help="Check data product against standards"
+    )
     check_p.add_argument("--spec", required=True, help="Path to product spec JSON file")
-    check_p.add_argument("--standards", required=True, help="Path to standards JSON array file")
+    check_p.add_argument(
+        "--standards", required=True, help="Path to standards JSON array file"
+    )
     check_p.set_defaults(func=cmd_check_standards)
 
 
@@ -57,8 +95,11 @@ def cmd_list(args) -> int:
 
 
 def cmd_get(args) -> int:
+    product_id = resolve_positional_or_flag(
+        args, "product_id", "product_flag", "product_id"
+    )
     with DataProductConfigClient() as client:
-        result = client.get_product(args.product_id)
+        result = client.get_product(product_id)
         print_json(result)
     return 0
 
@@ -84,30 +125,53 @@ def cmd_update(_args) -> int:
 
 
 def cmd_delete(args) -> int:
+    product_id = resolve_positional_or_flag(
+        args, "product_id", "product_flag", "product_id"
+    )
     with DataProductConfigClient() as client:
-        client.delete_product(args.product_id)
-        print_json({"status": "deleted", "product_id": args.product_id})
+        client.delete_product(product_id)
+        print_json({"status": "deleted", "product_id": product_id})
     return 0
 
 
 def cmd_get_version(args) -> int:
+    product_id = resolve_positional_or_flag(
+        args, "product_id", "product_flag", "product_id"
+    )
+    version_id = resolve_positional_or_flag(
+        args, "version_id", "version_flag", "version_id"
+    )
     with DataProductConfigClient() as client:
-        result = client.get_version(args.product_id, args.version_id)
+        result = client.get_version(product_id, version_id)
         print_json(result)
     return 0
 
 
 def cmd_update_version(args) -> int:
+    product_id = resolve_positional_or_flag(
+        args, "product_id", "product_flag", "product_id"
+    )
+    version_id = resolve_positional_or_flag(
+        args, "version_id", "version_flag", "version_id"
+    )
     with DataProductConfigClient() as client:
-        result = client.update_version(args.product_id, args.version_id, args.status)
+        result = client.update_version(product_id, version_id, args.status)
         print_json(result)
     return 0
 
 
 def cmd_delete_version(args) -> int:
+    product_id = resolve_positional_or_flag(
+        args, "product_id", "product_flag", "product_id"
+    )
+    version_id = resolve_positional_or_flag(
+        args, "version_id", "version_flag", "version_id"
+    )
     with DataProductConfigClient() as client:
-        client.delete_version(args.product_id, args.version_id)
-        print_json({"status": "deleted", "product_id": args.product_id, "version_id": args.version_id})
+        client.delete_version(product_id, version_id)
+        print_json(
+            {"status": "deleted", "product_id": product_id, "version_id": version_id}
+        )
     return 0
 
 
