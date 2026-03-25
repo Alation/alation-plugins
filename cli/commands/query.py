@@ -15,7 +15,7 @@ def register(group_parsers):
 
     search_p = sub.add_parser("search", help="Search data products")
     search_p.add_argument("--query", "-q", required=True, help="Search query")
-    search_p.add_argument("--marketplace", "-m", help="Marketplace ID (optional)")
+    search_p.add_argument("--marketplace", "-m", help="External marketplace ID (optional)")
     search_p.set_defaults(func=cmd_search)
 
     get_p = sub.add_parser("get", help="Get product details")
