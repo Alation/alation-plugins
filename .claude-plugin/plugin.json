@@ -1,8 +1,8 @@
 {
-  "name": "alation",
-  "description": "Alation platform skills: query data, explore catalogs, automate workflows, curate data products, and configure AI agents.",
-  "version": "1.0.0",
-  "homepage": "https://github.com/Alation/alation-plugins",
-  "repository": "https://github.com/Alation/alation-plugins",
-  "license": "Apache-2.0"
+    "name": "alation",
+    "description": "Alation platform skills: query data, explore catalogs, automate workflows, curate data products, and configure AI agents.",
+    "version": "1.0.1",
+    "homepage": "https://github.com/Alation/alation-plugins",
+    "repository": "https://github.com/Alation/alation-plugins",
+    "license": "Apache-2.0"
 }
