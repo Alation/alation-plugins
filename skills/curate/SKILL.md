@@ -40,7 +40,7 @@ Key distinction: `curate` manages data product definitions and metadata. `ask` r
    `python -m cli product update-version PRODUCT_ID VERSION_ID --status ready`
 
 5. **Publish to marketplace:**
-   `python -m cli marketplace publish --marketplace ID --product ID`
+   `python -m cli marketplace publish --marketplace EXTERNAL_MARKETPLACE_ID --product ID`
 
 ## Metadata Enrichment
 

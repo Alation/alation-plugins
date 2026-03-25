@@ -15,35 +15,35 @@ def register(group_parsers):
     list_p.set_defaults(func=cmd_list)
 
     get_p = sub.add_parser("get", help="Get marketplace details")
-    get_p.add_argument("--marketplace", "-m", required=True, help="Marketplace ID")
+    get_p.add_argument("--marketplace", "-m", required=True, help="External marketplace ID")
     get_p.set_defaults(func=cmd_get)
 
     sub.add_parser("create", help="Create marketplace (JSON from stdin)").set_defaults(func=cmd_create)
     sub.add_parser("update", help="Update marketplace (JSON from stdin)").set_defaults(func=cmd_update)
 
     delete_p = sub.add_parser("delete", help="Delete a marketplace")
-    delete_p.add_argument("--marketplace", "-m", required=True, help="Marketplace ID")
+    delete_p.add_argument("--marketplace", "-m", required=True, help="External marketplace ID")
     delete_p.set_defaults(func=cmd_delete)
 
     lp_p = sub.add_parser("products", help="List products in a marketplace")
-    lp_p.add_argument("--marketplace", "-m", required=True, help="Marketplace ID")
+    lp_p.add_argument("--marketplace", "-m", required=True, help="External marketplace ID")
     lp_p.add_argument("--limit", "-l", type=int, default=100, help="Max results")
     lp_p.add_argument("--skip", "-s", type=int, default=0, help="Skip N results")
     lp_p.set_defaults(func=cmd_products)
 
     pub_p = sub.add_parser("publish", help="Publish a product to a marketplace")
-    pub_p.add_argument("--marketplace", "-m", required=True, help="Marketplace ID")
+    pub_p.add_argument("--marketplace", "-m", required=True, help="External marketplace ID")
     pub_p.add_argument("--product", "-p", required=True, help="Product ID")
     pub_p.add_argument("--version", "-v", help="Specific version to publish")
     pub_p.set_defaults(func=cmd_publish)
 
     unpub_p = sub.add_parser("unpublish", help="Unpublish a product from a marketplace")
-    unpub_p.add_argument("--marketplace", "-m", required=True, help="Marketplace ID")
+    unpub_p.add_argument("--marketplace", "-m", required=True, help="External marketplace ID")
     unpub_p.add_argument("--product", "-p", required=True, help="Product ID")
     unpub_p.set_defaults(func=cmd_unpublish)
 
     search_p = sub.add_parser("search", help="Search products in a marketplace")
-    search_p.add_argument("--marketplace", "-m", required=True, help="Marketplace ID")
+    search_p.add_argument("--marketplace", "-m", required=True, help="External marketplace ID")
     search_p.add_argument("--query", "-q", required=True, help="Search query")
     search_p.set_defaults(func=cmd_search)
 

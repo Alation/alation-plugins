@@ -51,12 +51,12 @@ Use these commands to execute the workflow:
 | Describe object | `python -m cli browse describe --type {datasource\|schema\|table\|column} --id ID` |
 | Hierarchical tree | `python -m cli browse tree --ds-id ID [--depth 1\|2\|3]` |
 | List data products | `python -m cli query list [--limit N] [--skip N]` |
-| Search data products | `python -m cli query search --query "keyword" [--marketplace ID]` |
+| Search data products | `python -m cli query search --query "keyword" [--marketplace EXTERNAL_MARKETPLACE_ID]` |
 | Get product details/schema | `python -m cli query get --product ID [--schema-only]` |
 | List marketplaces | `python -m cli marketplace list` |
-| Get marketplace details | `python -m cli marketplace get --marketplace ID` |
-| List products in marketplace | `python -m cli marketplace products --marketplace ID` |
-| Search products in marketplace | `python -m cli marketplace search --marketplace ID --query "keyword"` |
+| Get marketplace details | `python -m cli marketplace get --marketplace EXTERNAL_MARKETPLACE_ID` |
+| List products in marketplace | `python -m cli marketplace products --marketplace EXTERNAL_MARKETPLACE_ID` |
+| Search products in marketplace | `python -m cli marketplace search --marketplace EXTERNAL_MARKETPLACE_ID --query "keyword"` |
 
 `search` type: Can be one of many options. The most common are "table", "column", "schema", "article", "glossary_term", "datasource", Use `--help` to see all the options.
 
@@ -91,7 +91,9 @@ Data products are queryable datasets published in Alation. They do not appear in
 Marketplaces are curated collections of data products. If the user mentions a marketplace or wants to browse published products:
 
 1. `marketplace list` to find available marketplaces.
-2. `marketplace products --marketplace ID` or `marketplace search --marketplace ID --query "keyword"` to browse within one.
+2. `marketplace products --marketplace EXTERNAL_MARKETPLACE_ID` or `marketplace search --marketplace EXTERNAL_MARKETPLACE_ID --query "keyword"` to browse within one. 
+
+Always use the external marketplace ID to identify marketplaces.
 
 ### Handoff to ask
 
