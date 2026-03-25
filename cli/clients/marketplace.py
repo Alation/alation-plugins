@@ -83,8 +83,7 @@ class MarketplaceClient(AlationClient):
         """List data products published in a marketplace."""
         endpoint = self._api_path(f"/marketplace/{marketplace_id}/data-product/")
         params: dict[str, Any] = {"limit": limit, "skip": skip}
-        result = self.get(endpoint, params)
-        products = result.get("results", result if isinstance(result, list) else [])
+        products = self.get(endpoint, params)
         for product in products:
             pid = product.get("product_id") or product.get("id")
             if pid:
