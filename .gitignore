@@ -9,3 +9,11 @@ venv/
 credentials.local
 .claude/
 .vscode/
+
+# Mac OS
+*.DS_Store
+
+# UV
+.python-version
+pyproject.toml
+uv.lock
