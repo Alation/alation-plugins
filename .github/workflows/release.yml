@@ -48,12 +48,21 @@ jobs:
           body+="\`\`\`"$'\n\n'
 
           body+="**Claude Cowork:**"$'\n'
-          body+="Download \`alation.zip\` below and upload it in the **Customize** tab."$'\n\n'
+          body+="##### Marketplace"$'\n'
+          body+="1. Go to \"Customize\" in the sidebar."$'\n'
+          body+="2. Click the \"+\" icon next to \"Personal Plugins\" and select \"Add marketplace\""$'\n'
+          body+="3. Add marketplace by URL: \`https://github.com/Alation/alation-plugins\`"$'\n'
+          body+="4. Install \`Alation\`"$'\n\n'
+          body+="##### Zip File"$'\n'
+          body+="1. Download \`alation.zip\` below."$'\n'
+          body+="2. Go to **Customize** in the sidebar."$'\n'
+          body+="3. Click the \"+\" icon next to \"Personal Plugins\" and select \"Upload plugin\""$'\n'
+          body+="4. Drag and drop or browse files to the downloaded zip file to install"$'\n\n'
 
           # Agent Skills section
-          if ls dist/agent-skills/agent-skill-*.zip 1>/dev/null 2>&1; then
-            body+="### Portable Agent Skills"$'\n\n'
-            body+="Self-contained skills that work with any agent (Codex, Gemini CLI, etc.)."$'\n'
+          if [ -f dist/agent-skills.zip ]; then
+            body+="### Portable Agent Skills (Codex / Gemini CLI)"$'\n\n'
+            body+="Self-contained skills that work with any agent supporting the [Agent Skills](https://agentskills.io) format."$'\n'
             body+="Each skill bundles the Alation CLI — no separate installation needed. Requires Python 3.10+."$'\n\n'
 
             body+="**Quick install (interactive):**"$'\n'
@@ -64,14 +73,12 @@ jobs:
             body+="**Install globally:**"$'\n'
             body+="\`\`\`bash"$'\n'
             body+="curl -fsSL https://raw.githubusercontent.com/Alation/alation-plugins/main/bin/install-agent-skills.sh | bash -s -- --scope user"$'\n'
-            body+="\`\`\`"$'\n'
-            body+="Requires \`curl\` and \`unzip\`."$'\n\n'
+            body+="\`\`\`"$'\n\n'
 
             body+="Available skills: "
-            for zip in dist/agent-skills/agent-skill-*.zip; do
-              skill_name="$(basename "$zip" .zip)"
-              skill_name="${skill_name#agent-skill-}"
-              body+="\`${skill_name}\` "
+            for d in dist/agent-skills/*/; do
+              [ -f "${d}/SKILL.md" ] || continue
+              body+="\`$(basename "$d")\` "
             done
             body+=$'\n'
           fi
@@ -100,12 +107,7 @@ jobs:
           tag="${{ steps.meta.outputs.release_tag }}"
 
           files=(dist/alation.zip)
-
-          for f in dist/agent-skills/agent-skill-*.zip; do
-            if [ -e "$f" ]; then
-              files+=("$f")
-            fi
-          done
+          [ -f dist/agent-skills.zip ] && files+=(dist/agent-skills.zip)
 
           gh release create "$tag" \
             "${files[@]}" \

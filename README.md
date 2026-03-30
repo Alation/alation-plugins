@@ -28,7 +28,7 @@ Register the marketplace and install:
 3. Add marketplace by URL: `https://github.com/Alation/alation-plugins`
 4. Install `Alation`
 
-> _Note: After adding a marketplace, you can check for updates or re-install plugins by clicking the "+" | icon next to "Personal Plugins" and selecting "Browse Plugins", then navigating to the "Personal" tab and selecting the `alation-plugins` marketplace_
+> _Note: After adding a marketplace, you can check for updates or re-install plugins by clicking the "+" icon next to "Personal Plugins" and selecting "Browse Plugins", then navigating to the "Personal" tab and selecting the `alation-plugins` marketplace_
 
 ##### Zip File
 1. Download `alation.zip` from the [latest release](https://github.com/Alation/alation-plugins/releases/latest).

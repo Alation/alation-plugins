@@ -105,69 +105,34 @@ download_skills_zip() {
   local release_json
   release_json="$(gh_api "${API_BASE}/releases/latest")"
 
-  # Extract asset names and download URLs (one per line: name<TAB>url)
+  # Extract the agent-skills.zip download URL.
   # Python is a prerequisite (3.10+), so we use it for reliable JSON parsing.
-  local assets
-  assets="$(echo "$release_json" | python3 -c '
+  local download_url
+  download_url="$(echo "$release_json" | python3 -c '
 import json, sys
 data = json.load(sys.stdin)
 for a in data.get("assets", []):
-    print(a["name"] + "\t" + a["browser_download_url"])
+    if a["name"] == "agent-skills.zip":
+        print(a["browser_download_url"])
+        break
 ' 2>/dev/null)" || die "Failed to parse release JSON. Is Python 3 available?"
 
-  # Try combined agent-skills.zip first
-  local combined_url
-  combined_url="$(echo "$assets" | awk -F'\t' '$1 == "agent-skills.zip" {print $2}')"
+  [ -n "$download_url" ] || die "No agent-skills.zip found in the latest release."
 
-  if [ -n "$combined_url" ]; then
-    faint "Downloading agent-skills.zip..."
-    gh_download "$combined_url" "${dest}/agent-skills.zip"
-    unzip -qo "${dest}/agent-skills.zip" -d "$dest"
-    rm -f "${dest}/agent-skills.zip"
+  faint "Downloading agent-skills.zip..."
+  gh_download "$download_url" "${dest}/agent-skills.zip"
+  unzip -qo "${dest}/agent-skills.zip" -d "$dest"
+  rm -f "${dest}/agent-skills.zip"
 
-    # Filter to selected skills if --skills was specified
-    if [ -n "$SKILLS" ]; then
-      for d in "$dest"/*/; do
-        [ -d "$d" ] || continue
-        local name
-        name="$(basename "$d")"
-        if ! echo "$SKILLS" | tr ',' '\n' | grep -qx "$name"; then
-          rm -rf "$d"
-        fi
-      done
-    fi
-  else
-    # Fall back to individual agent-skill-<name>.zip assets
-    local selected=()
-    local selected_urls=()
-
-    while IFS=$'\t' read -r name url; do
-      case "$name" in agent-skill-*)
-        if [ -n "$SKILLS" ]; then
-          local skill_name="${name#agent-skill-}"
-          skill_name="${skill_name%.zip}"
-          if echo "$SKILLS" | tr ',' '\n' | grep -qx "$skill_name"; then
-            selected+=("$name")
-            selected_urls+=("$url")
-          fi
-        else
-          selected+=("$name")
-          selected_urls+=("$url")
-        fi
-        ;;
-      esac
-    done <<< "$assets"
-
-    [ ${#selected[@]} -gt 0 ] || die "No agent-skill assets found in the latest release."
-
-    faint "Downloading ${#selected[@]} skill(s)..."
-    for i in "${!selected[@]}"; do
-      gh_download "${selected_urls[$i]}" "${dest}/${selected[$i]}"
-    done
-
-    for asset in "${selected[@]}"; do
-      unzip -qo "${dest}/${asset}" -d "$dest"
-      rm -f "${dest}/${asset}"
+  # Filter to selected skills if --skills was specified
+  if [ -n "$SKILLS" ]; then
+    for d in "$dest"/*/; do
+      [ -d "$d" ] || continue
+      local name
+      name="$(basename "$d")"
+      if ! echo "$SKILLS" | tr ',' '\n' | grep -qx "$name"; then
+        rm -rf "$d"
+      fi
     done
   fi
 

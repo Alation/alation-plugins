@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Package each Alation skill as a portable Agent Skill (agentskills.io spec).
+# Package Alation skills as portable Agent Skills (agentskills.io spec).
 #
 # Each skill gets:
 #   - SKILL.md with `python -m cli` rewritten to `scripts/run-cli`
@@ -12,7 +12,7 @@
 #   ./bin/build-agent-skills.sh ask explore  # Build specific skills
 #
 # Output: dist/agent-skills/<skill-name>/  (directories)
-#         dist/agent-skills/agent-skill-<skill-name>.zip  (zipped for distribution)
+#         dist/agent-skills.zip             (single zip for distribution)
 
 set -euo pipefail
 
@@ -98,13 +98,7 @@ PYTHONPATH="$SCRIPT_DIR${PYTHONPATH:+:$PYTHONPATH}" exec "$PYTHON" -m cli "$@"
 WRAPPER
   chmod +x "$skill_dst/scripts/run-cli"
 
-  # Create zip for distribution (prefixed so release assets are distinguishable from plugins)
-  local zip_name="agent-skill-${skill_name}.zip"
-  rm -f "$DIST_DIR/$zip_name"
-  (cd "$DIST_DIR" && zip -rq "$zip_name" "$skill_name/")
-
   echo "  -> $skill_dst/"
-  echo "  -> $DIST_DIR/$zip_name"
 }
 
 # Determine which skills to build
@@ -123,5 +117,10 @@ for skill_name in "${skills[@]}"; do
   build_one "$skill_name"
 done
 
+# Create a single zip containing all skills
+ZIP_PATH="$REPO_ROOT/dist/agent-skills.zip"
+rm -f "$ZIP_PATH"
+(cd "$DIST_DIR" && zip -rq "$ZIP_PATH" .)
+
 echo ""
-echo "Built ${#skills[@]} agent skill(s) in $DIST_DIR"
+echo "Built ${#skills[@]} agent skill(s) -> $ZIP_PATH"
