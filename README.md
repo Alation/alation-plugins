@@ -2,6 +2,8 @@
 
 AI coding agent plugin for the Alation platform. Query data products, explore catalogs, automate workflows, curate metadata, and configure AI agents — all through natural language.
 
+The latest plugin is always available from the [Releases](https://github.com/Alation/alation-plugins/releases/latest) page.
+
 ## Prerequisites
 
 - Python 3.10+
@@ -12,23 +14,48 @@ AI coding agent plugin for the Alation platform. Query data products, explore ca
 ### Step 1: Install the Plugin
 
 #### Claude Code
-Register the marketplace:
+
+Register the marketplace and install:
 ```
 /plugin marketplace add Alation/alation-plugins
-```
-Install the plugin:
-```
 /plugin install alation@alation-plugins
 ```
 
 #### Claude Cowork
+##### Marketplace
 1. Go to "Customize" in the sidebar.
-2. Click "Browse plugins" to open up the modal.
-3. Go to the "Personal" tab.
-4. Hit the "+" button and add marketplace by URL.
+2. Click the "+" icon next to "Personal Plugins" and select "Add marketplace"
+3. Add marketplace by URL: `https://github.com/Alation/alation-plugins`
+4. Install `Alation`
 
-#### Other Platforms (Codex, Gemini, etc.)
-The plugin works on other platforms, but setup is manual for now — automatic installation on these platforms doesn't include the CLI that skills depend on. Clone this repo and ensure the full `cli/` directory is available alongside `skills/`. First-class support is on the way; watch this repo for updates.
+> _Note: After adding a marketplace, you can check for updates or re-install plugins by clicking the "+" | icon next to "Personal Plugins" and selecting "Browse Plugins", then navigating to the "Personal" tab and selecting the `alation-plugins` marketplace_
+
+##### Zip File
+1. Download `alation.zip` from the [latest release](https://github.com/Alation/alation-plugins/releases/latest).
+2. Go to **Customize** in the sidebar.
+3. Click the "+" icon next to "Presonal Plugins" and select "Upload plugin"
+4. Drag and drop or browse files to the downloaded zip file to install
+
+#### Codex / Gemini CLI
+
+Install skills using the agent skills installer:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Alation/alation-plugins/main/bin/install-agent-skills.sh | bash -s -- --scope user
+```
+
+This installs portable agent skills to `~/.agents/skills/`, which both Codex and Gemini CLI read automatically.
+Each skill bundles the Alation CLI — no separate installation needed.
+
+To install to the current project only:
+```bash
+curl -fsSL https://raw.githubusercontent.com/Alation/alation-plugins/main/bin/install-agent-skills.sh | bash -s -- --scope workspace
+```
+
+#### Other Platforms
+
+Any agent that supports the [Agent Skills](https://agentskills.io) format can use Alation skills.
+Run the install script above with `--scope user` or `--scope workspace` and point your agent at the resulting `.agents/skills/` directory.
 
 ### Step 2: Register an OAuth Client
 
