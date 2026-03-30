@@ -1,0 +1,113 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version and short SHA
+        id: meta
+        run: |
+          version=$(jq -r '.version' .claude-plugin/plugin.json)
+          short_sha=$(git rev-parse --short HEAD)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$short_sha" >> "$GITHUB_OUTPUT"
+          echo "release_tag=v${version}-${short_sha}" >> "$GITHUB_OUTPUT"
+
+      - name: Build plugin zip
+        run: ./bin/build-plugin-zip.sh
+
+      - name: Build portable agent skills
+        run: ./bin/build-agent-skills.sh
+
+      - name: Build release body
+        id: body
+        run: |
+          version="${{ steps.meta.outputs.version }}"
+          body="## Alation Plugin v${version}"$'\n\n'
+
+          description=$(jq -r '.description' .claude-plugin/plugin.json)
+          body+="${description}"$'\n\n'
+
+          body+="### Installation"$'\n\n'
+
+          body+="**Claude Code (recommended):**"$'\n'
+          body+="\`\`\`"$'\n'
+          body+="/plugin marketplace add Alation/alation-plugins"$'\n'
+          body+="/plugin install alation@alation-plugins"$'\n'
+          body+="\`\`\`"$'\n\n'
+
+          body+="**Claude Cowork:**"$'\n'
+          body+="Download \`alation.zip\` below and upload it in the **Customize** tab."$'\n\n'
+
+          # Agent Skills section
+          if ls dist/agent-skills/agent-skill-*.zip 1>/dev/null 2>&1; then
+            body+="### Portable Agent Skills"$'\n\n'
+            body+="Self-contained skills that work with any agent (Codex, Gemini CLI, etc.)."$'\n'
+            body+="Each skill bundles the Alation CLI — no separate installation needed. Requires Python 3.10+."$'\n\n'
+
+            body+="**Quick install (interactive):**"$'\n'
+            body+="\`\`\`bash"$'\n'
+            body+="curl -fsSL https://raw.githubusercontent.com/Alation/alation-plugins/main/bin/install-agent-skills.sh | bash"$'\n'
+            body+="\`\`\`"$'\n\n'
+
+            body+="**Install globally:**"$'\n'
+            body+="\`\`\`bash"$'\n'
+            body+="curl -fsSL https://raw.githubusercontent.com/Alation/alation-plugins/main/bin/install-agent-skills.sh | bash -s -- --scope user"$'\n'
+            body+="\`\`\`"$'\n'
+            body+="Requires \`curl\` and \`unzip\`."$'\n\n'
+
+            body+="Available skills: "
+            for zip in dist/agent-skills/agent-skill-*.zip; do
+              skill_name="$(basename "$zip" .zip)"
+              skill_name="${skill_name#agent-skill-}"
+              body+="\`${skill_name}\` "
+            done
+            body+=$'\n'
+          fi
+
+          echo "$body" > dist/release-body.md
+
+      - name: Upload plugin artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: alation-plugin
+          path: |
+            dist/alation.zip
+
+      - name: Upload agent-skills artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: agent-skills
+          path: dist/agent-skills/*/
+          if-no-files-found: ignore
+
+      - name: Create GitHub release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${{ steps.meta.outputs.release_tag }}"
+
+          files=(dist/alation.zip)
+
+          for f in dist/agent-skills/agent-skill-*.zip; do
+            if [ -e "$f" ]; then
+              files+=("$f")
+            fi
+          done
+
+          gh release create "$tag" \
+            "${files[@]}" \
+            --title "Alation Plugin $tag" \
+            --notes-file dist/release-body.md
