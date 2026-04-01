@@ -75,6 +75,16 @@ jobs:
             body+="curl -fsSL https://raw.githubusercontent.com/Alation/alation-plugins/main/bin/install-agent-skills.sh | bash -s -- --scope user"$'\n'
             body+="\`\`\`"$'\n\n'
 
+            body+="**Snowflake Cortex Code:**"$'\n'
+            body+="Install agent skills using the quick install above, then register the skills directory with Cortex:"$'\n'
+            body+="\`\`\`bash"$'\n'
+            body+="cortex skill add ~/.agents/skills"$'\n'
+            body+="\`\`\`"$'\n'
+            body+="Verify the skills are available:"$'\n'
+            body+="\`\`\`bash"$'\n'
+            body+="cortex skill list"$'\n'
+            body+="\`\`\`"$'\n\n'
+
             body+="Available skills: "
             for d in dist/agent-skills/*/; do
               [ -f "${d}/SKILL.md" ] || continue

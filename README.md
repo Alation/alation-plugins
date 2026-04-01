@@ -52,6 +52,19 @@ To install to the current project only:
 curl -fsSL https://raw.githubusercontent.com/Alation/alation-plugins/main/bin/install-agent-skills.sh | bash -s -- --scope workspace
 ```
 
+#### Snowflake Cortex Code
+
+Install agent skills the same way as Codex / Gemini CLI above, then register the skills directory with Cortex:
+
+```bash
+cortex skill add ~/.agents/skills
+```
+
+Verify the skills are available:
+```bash
+cortex skill list
+```
+
 #### Other Platforms
 
 Any agent that supports the [Agent Skills](https://agentskills.io) format can use Alation skills.
