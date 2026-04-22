@@ -9,6 +9,7 @@ from __future__ import annotations
 import http.cookiejar
 import json
 import ssl
+import time
 import sys
 import urllib.error
 import urllib.parse
@@ -261,3 +262,39 @@ def print_json(data: Any) -> None:
 
 def print_error(message: str) -> None:
     print(f"Error: {message}", file=sys.stderr)
+
+
+# --- Shared async tool polling ---
+
+_DEFAULT_POLL_ATTEMPTS = 10
+_DEFAULT_POLL_INTERVAL = 1.0
+
+
+def poll_tool_result(
+    client: AlationClient,
+    chat_id: str,
+    *,
+    max_attempts: int = _DEFAULT_POLL_ATTEMPTS,
+    interval: float = _DEFAULT_POLL_INTERVAL,
+    default: Any = None,
+) -> Any:
+    """Poll chat messages for a tool-return part.
+
+    Used by SearchClient and BiClient for async tool endpoints.
+    """
+    if default is None:
+        default = {}
+    for _ in range(max_attempts):
+        messages = client.get(f"/api/v1/chats/{chat_id}/messages") or {}
+        for msg in messages.get("data", []):
+            for part in msg.get("model_message", {}).get("parts", []):
+                if part.get("part_kind") == "tool-return":
+                    content = part.get("content", "")
+                    try:
+                        return json.loads(content)
+                    except (json.JSONDecodeError, TypeError):
+                        if content:
+                            return {"raw_content": content}
+                        return default
+        time.sleep(interval)
+    return default
