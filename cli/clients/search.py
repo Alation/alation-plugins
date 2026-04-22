@@ -5,14 +5,9 @@ The tool endpoint is async: it returns a chat_id, then results
 are retrieved by polling the chat messages for a tool-return part.
 """
 
-import json
-import time
 from typing import Any
 
-from .base import AlationClient
-
-_MAX_POLL_ATTEMPTS = 10
-_POLL_INTERVAL_SECONDS = 1.0
+from .base import AlationClient, poll_tool_result
 
 
 class SearchClient(AlationClient):
@@ -99,20 +94,4 @@ class SearchClient(AlationClient):
         chat_id = result["chat_id"]
 
         # Poll for the tool-return message containing results
-        return self._poll_for_results(chat_id)
-
-    def _poll_for_results(self, chat_id: str) -> list[dict[str, Any]]:
-        """Poll chat messages until the tool-return with results is available."""
-        for _ in range(_MAX_POLL_ATTEMPTS):
-            messages = self.get(f"/api/v1/chats/{chat_id}/messages") or {}
-            for msg in messages.get("data", []):
-                for part in msg.get("model_message", {}).get("parts", []):
-                    if part.get("part_kind") == "tool-return":
-                        content = part.get("content", "[]")
-                        try:
-                            return json.loads(content)
-                        except (json.JSONDecodeError, TypeError):
-                            return []
-            time.sleep(_POLL_INTERVAL_SECONDS)
-
-        return []
+        return poll_tool_result(self, chat_id, default=[])
