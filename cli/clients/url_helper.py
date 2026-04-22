@@ -37,6 +37,9 @@ def bi_report_url(report_id: int) -> str:
 def bi_folder_url(folder_id: int) -> str:
     return f"{_base()}/app/bi_folder/{folder_id}/overview"
 
+def bi_datasource_url(datasource_id: int) -> str:
+    return f"{_base()}/app/bi_datasource/{datasource_id}/overview"
+
 def query_url(query_id: int) -> str:
     return f"{_base()}/app/query/{query_id}/overview"
 
@@ -44,7 +47,7 @@ def query_url(query_id: int) -> str:
 # --- Data products & marketplaces ---
 
 def data_product_url(product_id: str) -> str:
-    return f"{_base()}/app/data-product/{product_id}/overview"
+    return f"{_base()}/app/data-product/{product_id}"
 
 def marketplace_url(marketplace_id: str) -> str:
     return f"{_base()}/app/marketplace/{marketplace_id}"

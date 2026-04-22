@@ -27,6 +27,18 @@ Key distinction: `curate` manages data product definitions and metadata. `ask` r
 
 ## Data Product Lifecycle
 
+**First, check what you already have.** If a complete or near-complete spec is available (e.g. from `bi product-spec`, a user-provided JSON/YAML file, or a prior conversation step), use it as-is — do not discard its schema, record sets, or delivery systems. Only fall back to the empty-schema workflow when you are building a spec from scratch.
+
+### When a spec is already available
+
+1. **Review the spec** with the user. Confirm product ID, name, record sets, and schema look correct.
+2. **Save the spec** as a JSON file (e.g. `spec.json`), then **create the product**:
+   `python -m cli product create < spec.json`
+   If the spec is in YAML (e.g. from `bi product-spec`), convert it to JSON before saving.
+3. Continue to **Mark version ready** and **Publish** below.
+
+### When building from scratch
+
 1. **Create product** with minimal spec (`"schema": []`):
    `python -m cli product create < spec.json`
    See `references/product-schema.md` for the JSON schema.
@@ -35,6 +47,8 @@ Key distinction: `curate` manages data product definitions and metadata. `ask` r
 
 3. **Update spec** with discovered schema:
    `python -m cli product update < updated_spec.json`
+
+### After creation (both paths)
 
 4. **Mark version ready:**
    `python -m cli product update-version PRODUCT_ID VERSION_ID --status ready`
@@ -69,5 +83,6 @@ their go-ahead unless their original request already implies it.
   If the user mentions recurring reports, suggest the **automate** skill to schedule queries.
 
 ## Red Flags
-- "I'll populate the full schema upfront" — create with empty schema first, discover columns, then update.
+- "I'll populate the full schema upfront" — only when building from scratch. If a pre-populated spec was provided, use it as-is.
 - "Let me set the product version to ready immediately" — only after the spec is complete and validated.
+- "Let me strip the schema and start fresh" — if the spec already has schema/record sets, do not discard them.

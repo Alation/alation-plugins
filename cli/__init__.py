@@ -15,6 +15,7 @@ def main() -> int:
 
     from cli.commands import (
         agent,
+        bi,
         browse,
         chat,
         datasource,
@@ -38,6 +39,7 @@ def main() -> int:
         llm,
         datasource,
         browse,
+        bi,
         search,
         workflow,
         schedule,
