@@ -74,8 +74,9 @@ class SearchClient(AlationClient):
                     - value
                     - query
                     - documentation
-                    - bi_report
+                    - bi_report (dashboard/report: Looker Dashboard, Power BI Report, Tableau Dashboard)
                     - bi_folder
+                    - bi_datasource (semantic layer: Looker Explore, Power BI Dataset, Tableau Datasource)
                     - policy
                     - business_policy
                     - policy_group

@@ -29,8 +29,17 @@ Translate user goals into catalog discovery actions:
 - "What's in this data product?" -> get product details and schema.
 - "What marketplaces are available?" -> list marketplaces.
 - "What products are in marketplace X?" -> list or search products in a marketplace.
+- "What BI reports about X?" -> search with `--type bi_report`.
+- "What BI datasources/explores/datasets for X?" -> search with `--type bi_datasource`.
+- "What feeds this dashboard/report?" -> get report ID, then `bi report-sources --id ID`.
+- "What reports use this datasource/explore/dataset?" -> get datasource ID, then `bi source-reports --id ID`.
+- "Tell me about this BI report" -> `bi describe --type report --id ID`.
+- "Show me the semantic layer / views for this datasource" -> `bi describe --type datasource --id ID`.
+- "What metrics/measures are in this report/dashboard?" -> `bi report-sources --id ID` to find the datasource, then `bi describe --type datasource --id DATASOURCE_ID` to get the measures.
+- "Create a data product from this BI datasource/report" -> `bi product-spec --id DATASOURCE_ID` to generate the spec, then hand off to **curate** to create the product.
 
 If user says something broad like "show me sales data":
+
 1. Treat as discovery by default (explore).
 2. Search both catalog (`search "sales"`) and data products (`query search --query "sales"`).
 3. Present results grouped: data products first (queryable), then catalog matches (browse-only).
@@ -41,22 +50,29 @@ If user says something broad like "show me sales data":
 
 Use these commands to execute the workflow:
 
-| Goal | CLI Command |
-|---|---|
-| Keyword discovery | `python -m cli search "keyword" [--limit N] [--type <object_type>]` |
-| List data sources | `python -m cli browse sources [--limit N] [--skip N]` |
-| List schemas in source | `python -m cli browse schemas --ds-id ID [--limit N] [--skip N]` |
-| List tables | `python -m cli browse tables --schema-id ID [--limit N] [--skip N]` or `--ds-id ID` |
-| List columns | `python -m cli browse columns --table-id ID [--limit N] [--skip N]` or `--ds-id ID` |
-| Describe object | `python -m cli browse describe --type {datasource\|schema\|table\|column} --id ID` |
-| Hierarchical tree | `python -m cli browse tree --ds-id ID [--depth 1\|2\|3]` |
-| List data products | `python -m cli query list [--limit N] [--skip N]` |
-| Search data products | `python -m cli query search --query "keyword" [--marketplace EXTERNAL_MARKETPLACE_ID]` |
-| Get product details/schema | `python -m cli query get --product ID [--schema-only]` |
-| List marketplaces | `python -m cli marketplace list` |
-| Get marketplace details | `python -m cli marketplace get --marketplace EXTERNAL_MARKETPLACE_ID` |
-| List products in marketplace | `python -m cli marketplace products --marketplace EXTERNAL_MARKETPLACE_ID` |
-| Search products in marketplace | `python -m cli marketplace search --marketplace EXTERNAL_MARKETPLACE_ID --query "keyword"` |
+| Goal                                          | CLI Command                                                                                |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Keyword discovery                             | `python -m cli search "keyword" [--limit N] [--type <object_type>]`                        |
+| List data sources                             | `python -m cli browse sources [--limit N] [--skip N]`                                      |
+| List schemas in source                        | `python -m cli browse schemas --ds-id ID [--limit N] [--skip N]`                           |
+| List tables                                   | `python -m cli browse tables --schema-id ID [--limit N] [--skip N]` or `--ds-id ID`        |
+| List columns                                  | `python -m cli browse columns --table-id ID [--limit N] [--skip N]` or `--ds-id ID`        |
+| Describe object                               | `python -m cli browse describe --type {datasource\|schema\|table\|column} --id ID`         |
+| Hierarchical tree                             | `python -m cli browse tree --ds-id ID [--depth 1\|2\|3]`                                   |
+| List data products                            | `python -m cli query list [--limit N] [--skip N]`                                          |
+| Search data products                          | `python -m cli query search --query "keyword" [--marketplace EXTERNAL_MARKETPLACE_ID]`     |
+| Get product details/schema                    | `python -m cli query get --product ID [--schema-only]`                                     |
+| List marketplaces                             | `python -m cli marketplace list`                                                           |
+| Get marketplace details                       | `python -m cli marketplace get --marketplace EXTERNAL_MARKETPLACE_ID`                      |
+| List products in marketplace                  | `python -m cli marketplace products --marketplace EXTERNAL_MARKETPLACE_ID`                 |
+| Search products in marketplace                | `python -m cli marketplace search --marketplace EXTERNAL_MARKETPLACE_ID --query "keyword"` |
+| Search BI reports                             | `python -m cli search "keyword" --type bi_report`                                          |
+| Search BI datasources                         | `python -m cli search "keyword" --type bi_datasource`                                      |
+| Report's upstream datasources                 | `python -m cli bi report-sources --id REPORT_ID [--limit N]`                               |
+| Datasource's downstream reports               | `python -m cli bi source-reports --id DATASOURCE_ID [--limit N]`                           |
+| BI report detail                              | `python -m cli bi describe --type report --id ID`                                          |
+| BI datasource views                           | `python -m cli bi describe --type datasource --id ID`                                      |
+| Generate data product spec from BI datasource | `python -m cli bi product-spec --id DATASOURCE_ID`                                         |
 
 `search` type: Can be one of many options. The most common are "table", "column", "schema", "article", "glossary_term", "datasource", Use `--help` to see all the options.
 
@@ -91,9 +107,49 @@ Data products are queryable datasets published in Alation. They do not appear in
 Marketplaces are curated collections of data products. If the user mentions a marketplace or wants to browse published products:
 
 1. `marketplace list` to find available marketplaces.
-2. `marketplace products --marketplace EXTERNAL_MARKETPLACE_ID` or `marketplace search --marketplace EXTERNAL_MARKETPLACE_ID --query "keyword"` to browse within one. 
+2. `marketplace products --marketplace EXTERNAL_MARKETPLACE_ID` or `marketplace search --marketplace EXTERNAL_MARKETPLACE_ID --query "keyword"` to browse within one.
 
 Always use the external marketplace ID to identify marketplaces.
+
+### BI Discovery
+
+BI objects represent dashboards, reports, and their semantic-layer datasources from tools like Tableau, Looker, and Power BI.
+
+**Terminology mapping:**
+
+- User says "dashboard", "workbook", "report", "sheet", "tile" -> Alation type `bi_report`
+- User says "datasource", "explore", "dataset", "published datasource", "semantic layer" -> Alation type `bi_datasource`
+- User says "folder", "project", "workspace", "site" -> Alation type `bi_folder`
+
+**Finding BI objects:**
+
+1. `search "keyword" --type bi_report` to find reports/dashboards.
+2. `search "keyword" --type bi_datasource` to find semantic-layer datasources.
+3. `bi describe --type report --id ID` for report metadata.
+4. `bi describe --type datasource --id ID` for semantic-layer views (joins, dimensions, measures).
+
+**Cross-navigation (the key BI workflow):**
+
+- "What data feeds this dashboard?" -> `bi report-sources --id REPORT_ID`
+- "Which dashboards use this explore/dataset?" -> `bi source-reports --id DATASOURCE_ID`
+
+Cross-navigation uses lineage, so it resolves transitive relationships automatically. A Looker Dashboard resolves through its Tiles to the underlying Explore. A Power BI Dashboard resolves through Tiles and Reports to the underlying Dataset.
+
+**Typical BI exploration flow:**
+
+1. User asks about BI data -> search with `--type bi_report` or `--type bi_datasource`.
+2. User picks a result -> detail with `bi describe`.
+3. User asks "what feeds this?" or "what uses this?" -> cross-navigate.
+4. If user wants to query the underlying data, hand off to **ask**.
+5. If user wants to create a data product from a BI datasource -> `bi product-spec --id DATASOURCE_ID`, then hand off to **curate**.
+
+**BI to data product flow:**
+
+1. Find the report: `search "keyword" --type bi_report`.
+2. Get its upstream datasource: `bi report-sources --id REPORT_ID`.
+3. Inspect metrics/measures: `bi describe --type datasource --id DATASOURCE_ID`.
+4. Generate a product spec: `bi product-spec --id DATASOURCE_ID`. Dialect is auto-detected.
+5. Present the spec to the user for review, then hand off to **curate** to create the product with `product create`.
 
 ### Handoff to ask
 
@@ -166,6 +222,14 @@ Instead: Data products don't appear in catalog search. Use `query search` or `qu
 Why it seems reasonable: they sound like discovery commands.
 Instead: Those are management commands (raw spec JSON) used by the `curate` skill. For discovery, use `query list` and `query get` which return consumer-friendly views.
 
+**Mistake:** Using `search --type datasource` to find BI datasources.
+Why it seems reasonable: "datasource" and "bi_datasource" sound similar.
+Instead: `datasource` is for RDBMS data sources (Postgres, Snowflake). BI semantic layers (Looker Explores, Tableau Published Datasources, Power BI Datasets) use `--type bi_datasource`.
+
+**Mistake:** Using `browse` commands for BI objects.
+Why it seems reasonable: browse works for catalog objects, why not BI?
+Instead: BI has its own hierarchy. Use `bi` commands for detail and cross-navigation, `search` with BI type filters for discovery.
+
 ## Red Flags
 
 - "Let me search for all tables" — search is keyword-based. To list tables, use browse.
@@ -173,3 +237,5 @@ Instead: Those are management commands (raw spec JSON) used by the `curate` skil
 - "I'll fetch all columns for this data source" — could be enormous. Drill down through schemas and tables first.
 - "Let me show you everything at depth 3" — start at depth 1; go deeper only as needed.
 - "Data products should show up in catalog search" — they don't. Use `query search` or `query list`.
+- "I'll use `--type datasource` to find the Tableau data source" — that finds RDBMS sources, not BI sources. Use `--type bi_datasource`.
+- "Let me browse BI reports" — browse is for catalog hierarchies. Use `search --type bi_report` for discovery.
