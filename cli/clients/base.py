@@ -163,7 +163,7 @@ class AlationClient:
             raise RuntimeError(ERR_CLIENT_NOT_INIT)
 
         if params:
-            url = f"{url}?{urllib.parse.urlencode(params)}"
+            url = f"{url}?{urllib.parse.urlencode(params, doseq=True)}"
 
         body = None
         if json_data is not None:
