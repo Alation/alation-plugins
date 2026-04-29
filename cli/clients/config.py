@@ -12,6 +12,23 @@ from .base import AlationClient
 from . import url_helper
 
 
+def _extract_items(result: Any) -> list[dict]:
+    """Return the list of items from a list-style API response.
+
+    Handles both shapes the Alation API uses: ``{"data": [...]}`` (e.g.,
+    ``/api/v1/config/agent``, ``/api/v1/config/tool``) and ``{"results": [...]}``.
+    Falls back to a bare list, or empty list if neither shape matches.
+    """
+    if isinstance(result, list):
+        return result
+    if isinstance(result, dict):
+        for key in ("data", "results"):
+            value = result.get(key)
+            if isinstance(value, list):
+                return value
+    return []
+
+
 class ConfigAPIClient(AlationClient):
     """HTTP client for Alation AI config APIs.
 
@@ -36,7 +53,7 @@ class ConfigAPIClient(AlationClient):
         if visibility_labels:
             params["visibility_labels"] = visibility_labels
         result = self.get("/api/v1/config/agent", params)
-        for agent in result.get("results", result if isinstance(result, list) else []):
+        for agent in _extract_items(result):
             if agent.get("id"):
                 agent["url"] = url_helper.agent_url(agent["id"])
         return result
@@ -102,7 +119,7 @@ class ConfigAPIClient(AlationClient):
         if visibility_labels:
             params["visibility_labels"] = visibility_labels
         result = self.get("/api/v1/config/tool", params)
-        for tool in result.get("results", result if isinstance(result, list) else []):
+        for tool in _extract_items(result):
             if tool.get("id"):
                 tool["url"] = url_helper.tool_url(tool["id"])
         return result
