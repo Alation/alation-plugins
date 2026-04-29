@@ -5,7 +5,7 @@ import sys
 import urllib.error
 
 from cli.clients.base import print_json, print_error
-from cli.clients.config import ConfigAPIClient
+from cli.clients.config import ConfigAPIClient, _extract_items
 from cli.clients.chat import ChatClient, MessagePart, _is_config_id
 from cli.commands._helpers import read_json_stdin
 
@@ -63,7 +63,7 @@ def _summarize_tool(tool: dict) -> dict:
 def cmd_list(_args) -> int:
     with ConfigAPIClient() as client:
         result = client.list_tools()
-        tools = result.get("results", result if isinstance(result, list) else [])
+        tools = _extract_items(result)
         print_json([_summarize_tool(t) for t in tools])
     return 0
 

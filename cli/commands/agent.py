@@ -1,7 +1,7 @@
 """Agent configuration commands."""
 
 from cli.clients.base import print_json
-from cli.clients.config import ConfigAPIClient
+from cli.clients.config import ConfigAPIClient, _extract_items
 from cli.commands._helpers import read_json_stdin
 
 
@@ -59,7 +59,7 @@ def cmd_list(args) -> int:
     visibility_labels = [args.visibility] if args.visibility else None
     with ConfigAPIClient() as client:
         result = client.list_agents(visibility_labels=visibility_labels)
-        agents = result.get("results", result if isinstance(result, list) else [])
+        agents = _extract_items(result)
         print_json([_summarize_agent(a) for a in agents])
     return 0
 
