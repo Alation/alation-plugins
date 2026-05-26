@@ -1,6 +1,6 @@
 ---
 name: configure
-description: 'Use when the user wants to create, modify, or manage AI agents, custom tools, LLM configurations, or data source connections. Triggers: create agent, configure agent, clone agent, publish agent as tool, create HTTP tool, create SMTP tool, add tool, configure LLM, bring your own model, BYOM, add data source, create connection, parameter bindings, tool authentication, set up agent, set up tool, manage LLM credentials. Key signal: if "set up" refers to infrastructure (agents, tools, LLMs, connections), use this skill. If "set up" refers to scheduling or automation, use automate. Not for scheduling or workflows — use automate. Not for creating data products — use curate.'
+description: 'Use when the user wants to create, modify, or manage AI agents, custom tools, LLM configurations, or data source connections. Triggers: create agent, configure agent, clone agent, publish agent as tool, export agent, import agent, share agent, create HTTP tool, create SMTP tool, add tool, configure LLM, bring your own model, BYOM, add data source, create connection, parameter bindings, tool authentication, set up agent, set up tool, manage LLM credentials. Key signal: if "set up" refers to infrastructure (agents, tools, LLMs, connections), use this skill. If "set up" refers to scheduling or automation, use automate. Not for scheduling or workflows — use automate. Not for creating data products — use curate.'
 ---
 
 # Configure
@@ -11,7 +11,7 @@ Create and manage agents, tools, LLMs, and data source connections.
 
 | User Intent | CLI Command | When to Use |
 |---|---|---|
-| Manage AI agents | `python -m cli agent` | Create, clone, update, delete, publish agents |
+| Manage AI agents | `python -m cli agent` | Create, clone, update, delete, publish, export, import agents |
 | Manage tools | `python -m cli tool` | Create HTTP/SMTP tools, update, delete |
 | Manage LLMs | `python -m cli llm` | BYOM setup, credentials, LLM configs |
 | Manage data sources | `python -m cli datasource` | Create, update, delete data source connections |
@@ -58,6 +58,15 @@ Key distinction: `configure` creates and manages the infrastructure (agents, too
 
 ### Publishing as Tool
 `python -m cli agent publish ID` makes an agent callable by other agents.
+
+### Exporting and Importing Agents
+
+Export an agent's configuration as portable JSON that can be imported on another instance:
+
+1. **Export:** `python -m cli agent export ID` — outputs the agent config as JSON including LLM, tools, and parameter bindings.
+2. **Import:** `python -m cli agent import < export.json` — creates a new agent from the exported JSON. Resolves LLM and tool references to the current instance's equivalents.
+
+Import returns warnings if any tool or parameter binding may need manual review (e.g., custom tools that don't exist on the target instance, or fixed parameter values that are instance-specific). Agents with warnings are created in DRAFT status.
 
 ## Tool Configuration
 
