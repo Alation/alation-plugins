@@ -106,6 +106,17 @@ class ConfigAPIClient(AlationClient):
         """Unpublish an agent's tool."""
         self.delete(f"/api/v1/config/agent/{agent_id}/unpublish_tool")
 
+    def export_agent(self, agent_id: str) -> dict:
+        """Export an agent config as portable JSON."""
+        return self.get(f"/api/v1/config/agent/{agent_id}/export")
+
+    def import_agent(self, config: dict) -> dict:
+        """Import an agent from exported JSON."""
+        result = self.post("/api/v1/config/agent/import", config)
+        if isinstance(result, dict) and result.get("agent", {}).get("id"):
+            result["agent"]["url"] = url_helper.agent_url(result["agent"]["id"])
+        return cast("dict[str, Any]", result)
+
     # --- Tool Config API ---
 
     def list_tools(

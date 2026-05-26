@@ -43,6 +43,12 @@ def register(group_parsers):
     unpublish_p.add_argument("id", help="Agent config ID")
     unpublish_p.set_defaults(func=cmd_unpublish)
 
+    export_p = sub.add_parser("export", help="Export agent config as portable JSON")
+    export_p.add_argument("id", help="Agent config ID")
+    export_p.set_defaults(func=cmd_export)
+
+    sub.add_parser("import", help="Import agent from exported JSON (read from stdin)").set_defaults(func=cmd_import)
+
 
 def _summarize_agent(agent: dict) -> dict:
     return {
@@ -123,4 +129,21 @@ def cmd_unpublish(args) -> int:
     with ConfigAPIClient() as client:
         client.unpublish_agent_tool(args.id)
         print(f"Unpublished agent tool: {args.id}")
+    return 0
+
+
+def cmd_export(args) -> int:
+    with ConfigAPIClient() as client:
+        result = client.export_agent(args.id)
+        print_json(result)
+    return 0
+
+
+def cmd_import(_args) -> int:
+    config = read_json_stdin("agent export")
+    if config is None:
+        return 1
+    with ConfigAPIClient() as client:
+        result = client.import_agent(config)
+        print_json(result)
     return 0
