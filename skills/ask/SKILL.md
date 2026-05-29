@@ -11,12 +11,12 @@ Answer data questions by querying data products, chatting with AI agents, or inv
 
 | User Intent | CLI Command | When to Use |
 |---|---|---|
-| Answer a data question | `python -m cli query execute` | User has a data product ID (or one was found via explore) |
-| Inspect product schema before querying | `python -m cli query get --product ID --schema-only` | Internal prep to write correct SQL — not for user-facing schema discovery (use explore) |
-| Multi-turn reasoning or analysis | `python -m cli chat send` | User wants to chat with a specific agent |
-| Single-shot tool operation | `python -m cli tool call` | User wants one specific action |
+| Answer a data question | `scripts/run-cli query execute` | User has a data product ID (or one was found via explore) |
+| Inspect product schema before querying | `scripts/run-cli query get --product ID --schema-only` | Internal prep to write correct SQL — not for user-facing schema discovery (use explore) |
+| Multi-turn reasoning or analysis | `scripts/run-cli chat send` | User wants to chat with a specific agent |
+| Single-shot tool operation | `scripts/run-cli tool call` | User wants one specific action |
 
-**Default path:** For data questions, execute a query against a data product using `python -m cli query execute`. The product ID should be known — if not, use the **explore** skill to find the right product first. Only use `python -m cli chat` or `python -m cli tool` if no data product fits or the user explicitly asks for an agent or tool.
+**Default path:** For data questions, execute a query against a data product using `scripts/run-cli query execute`. The product ID should be known — if not, use the **explore** skill to find the right product first. Only use `scripts/run-cli chat` or `scripts/run-cli tool` if no data product fits or the user explicitly asks for an agent or tool.
 
 **Only Data Products can be queried.** If the user wants to query a raw table or database that isn't part of a data product, explain this limitation. Use **explore** to find an equivalent data product, or suggest **curate** to wrap the table in a new data product.
 
@@ -37,33 +37,33 @@ For detailed step-by-step workflows, read:
 
 ### Data Product Query (most common)
 ```
-python -m cli query get --product ID --schema-only    # See tables/columns (if schema not yet known)
-python -m cli query execute --product ID --sql "SELECT ..."  # Run query
-python -m cli query validate --product ID --sql "SELECT ..."  # Validate without running (optional)
+scripts/run-cli query get --product ID --schema-only    # See tables/columns (if schema not yet known)
+scripts/run-cli query execute --product ID --sql "SELECT ..."  # Run query
+scripts/run-cli query validate --product ID --sql "SELECT ..."  # Validate without running (optional)
 ```
 Product ID should be known before reaching this skill. If unknown, use the **explore** skill to search for and identify the right data product.
 
 ### Agent Chat
 ```
-python -m cli agent list                                                           # See all agents (summary)
-echo '{"message": "..."}' | python -m cli chat send alamigo_agent                  # Default agent (by ref)
-echo '{"message": "..."}' | python -m cli chat send 957ed0b8-4b42-4d5b-9e07-...   # Custom agent (by UUID)
+scripts/run-cli agent list                                                           # See all agents (summary)
+echo '{"message": "..."}' | scripts/run-cli chat send alamigo_agent                  # Default agent (by ref)
+echo '{"message": "..."}' | scripts/run-cli chat send 957ed0b8-4b42-4d5b-9e07-...   # Custom agent (by UUID)
 ```
 Default agents have `is_default: true` and a `default_ref` — use the ref name with `chat send`. Use `agent get <id>` for full config detail.
 
 To continue a conversation (multi-turn), pass `--chat-id` from the previous response:
 ```
-echo '{"message": "Now break it down by region"}' | python -m cli chat send alamigo_agent --chat-id <uuid>
+echo '{"message": "Now break it down by region"}' | scripts/run-cli chat send alamigo_agent --chat-id <uuid>
 ```
 Without `--chat-id`, each `chat send` starts a fresh conversation with no memory of prior messages.
 
 ### Tool Invocation
 ```
-python -m cli tool list                          # See all tools (summary)
-python -m cli tool schema TOOL_REF_OR_UUID       # Check tool parameters
-echo '{"param": "value"}' | python -m cli tool call TOOL_REF_OR_UUID  # Invoke tool
+scripts/run-cli tool list                          # See all tools (summary)
+scripts/run-cli tool schema TOOL_REF_OR_UUID       # Check tool parameters
+echo '{"param": "value"}' | scripts/run-cli tool call TOOL_REF_OR_UUID  # Invoke tool
 ```
-See `configure/references/default-tools.md`. Use `python -m cli tool schema <ref>` for full parameter detail.
+See `configure/references/default-tools.md`. Use `scripts/run-cli tool schema <ref>` for full parameter detail.
 
 ## Not This Skill
 
@@ -80,7 +80,7 @@ If the user mentions anything recurring, scheduled, daily, weekly, or automated 
 
 **Mistake:** Trying to use Compose or a raw SQL endpoint to execute a query.
 Why it seems reasonable: the user said "run this SQL."
-Instead: Always use `python -m cli query execute` which routes through the proper execution API. There is no Compose API.
+Instead: Always use `scripts/run-cli query execute` which routes through the proper execution API. There is no Compose API.
 
 **Mistake:** Chatting with an agent when a direct data product query would suffice.
 Why it seems reasonable: agents can answer questions too.
@@ -88,7 +88,7 @@ Instead: For straightforward data questions, data product queries are faster and
 
 **Mistake:** Invoking sql_execution_tool via tool-invoke for ad-hoc queries.
 Why it seems reasonable: it's a SQL execution tool.
-Instead: Use `python -m cli query execute` which handles product context, schema discovery, and error recovery.
+Instead: Use `scripts/run-cli query execute` which handles product context, schema discovery, and error recovery.
 
 **Mistake:** Searching for data products within the ask skill.
 Why it seems reasonable: you need to find a product before querying it.
@@ -99,6 +99,6 @@ Why it seems reasonable: picking one and moving forward feels efficient and help
 Instead: Present the matches to the user with names, descriptions, and distinguishing details. Let them choose. Picking the wrong source doesn't just waste time — the user gets back results they'll trust and act on, with no indication the data came from the wrong place.
 
 ## Red Flags
-- "I'll use Compose to run this query" — there is no Compose API. Use `python -m cli query execute`.
+- "I'll use Compose to run this query" — there is no Compose API. Use `scripts/run-cli query execute`.
 - "Let me call the API directly" — always use the CLI.
 - "I don't know which data product to use, so I'll skip it" — route to the **explore** skill to find one first.

@@ -186,20 +186,20 @@ For Google's AI models.
 
 ```bash
 # Create credentials
-echo '<json>' | python -m cli llm creds-create
+echo '<json>' | scripts/run-cli llm creds-create
 
 # List credentials (shows truncated secrets)
-python -m cli llm creds-list
+scripts/run-cli llm creds-list
 
 # Validate credentials
-python -m cli llm creds-validate <id> --provider <provider>
+scripts/run-cli llm creds-validate <id> --provider <provider>
 
 # Update credentials (e.g., rotate API key)
 echo '{"api_key": "new-key..."}' | \
-  python -m cli llm creds-update <id>
+  scripts/run-cli llm creds-update <id>
 
 # Delete credentials
-python -m cli llm creds-delete <id>
+scripts/run-cli llm creds-delete <id>
 ```
 
 ## Troubleshooting

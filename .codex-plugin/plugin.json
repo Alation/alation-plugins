@@ -1,0 +1,43 @@
+{
+  "name": "alation",
+  "version": "1.0.1",
+  "description": "Alation platform skills: query data, explore catalogs, automate workflows, curate data products, and configure AI agents.",
+  "author": {
+    "name": "Alation AI",
+    "email": "alation-ai-squad@alation.com",
+    "url": "https://www.alation.com/"
+  },
+  "homepage": "https://github.com/Alation/alation-plugins",
+  "repository": "https://github.com/Alation/alation-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "alation",
+    "data-catalog",
+    "data-products",
+    "agents",
+    "workflows",
+    "tools"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Alation",
+    "shortDescription": "Work with Alation data products, catalogs, agents, tools, and workflows.",
+    "longDescription": "Use Alation from Codex to query data products, search and browse catalog assets, configure AI agents and tools, automate workflows, and curate data products and metadata.",
+    "developerName": "Alation AI",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://www.alation.com/",
+    "defaultPrompt": [
+      "Set up my Alation connection.",
+      "Find data products related to revenue.",
+      "Query an Alation data product."
+    ],
+    "composerIcon": "./assets/alation-icon.png",
+    "logo": "./assets/alation-icon.png",
+    "brandColor": "#1D4ED8"
+  }
+}

@@ -52,27 +52,27 @@ Use these commands to execute the workflow:
 
 | Goal                                          | CLI Command                                                                                |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Keyword discovery                             | `python -m cli search "keyword" [--limit N] [--type <object_type>]`                        |
-| List data sources                             | `python -m cli browse sources [--limit N] [--skip N]`                                      |
-| List schemas in source                        | `python -m cli browse schemas --ds-id ID [--limit N] [--skip N]`                           |
-| List tables                                   | `python -m cli browse tables --schema-id ID [--limit N] [--skip N]` or `--ds-id ID`        |
-| List columns                                  | `python -m cli browse columns --table-id ID [--limit N] [--skip N]` or `--ds-id ID`        |
-| Describe object                               | `python -m cli browse describe --type {datasource\|schema\|table\|column} --id ID`         |
-| Hierarchical tree                             | `python -m cli browse tree --ds-id ID [--depth 1\|2\|3]`                                   |
-| List data products                            | `python -m cli query list [--limit N] [--skip N]`                                          |
-| Search data products                          | `python -m cli query search --query "keyword" [--marketplace EXTERNAL_MARKETPLACE_ID]`     |
-| Get product details/schema                    | `python -m cli query get --product ID [--schema-only]`                                     |
-| List marketplaces                             | `python -m cli marketplace list`                                                           |
-| Get marketplace details                       | `python -m cli marketplace get --marketplace EXTERNAL_MARKETPLACE_ID`                      |
-| List products in marketplace                  | `python -m cli marketplace products --marketplace EXTERNAL_MARKETPLACE_ID`                 |
-| Search products in marketplace                | `python -m cli marketplace search --marketplace EXTERNAL_MARKETPLACE_ID --query "keyword"` |
-| Search BI reports                             | `python -m cli search "keyword" --type bi_report`                                          |
-| Search BI datasources                         | `python -m cli search "keyword" --type bi_datasource`                                      |
-| Report's upstream datasources                 | `python -m cli bi report-sources --id REPORT_ID [--limit N]`                               |
-| Datasource's downstream reports               | `python -m cli bi source-reports --id DATASOURCE_ID [--limit N]`                           |
-| BI report detail                              | `python -m cli bi describe --type report --id ID`                                          |
-| BI datasource views                           | `python -m cli bi describe --type datasource --id ID`                                      |
-| Generate data product spec from BI datasource | `python -m cli bi product-spec --id DATASOURCE_ID`                                         |
+| Keyword discovery                             | `scripts/run-cli search "keyword" [--limit N] [--type <object_type>]`                        |
+| List data sources                             | `scripts/run-cli browse sources [--limit N] [--skip N]`                                      |
+| List schemas in source                        | `scripts/run-cli browse schemas --ds-id ID [--limit N] [--skip N]`                           |
+| List tables                                   | `scripts/run-cli browse tables --schema-id ID [--limit N] [--skip N]` or `--ds-id ID`        |
+| List columns                                  | `scripts/run-cli browse columns --table-id ID [--limit N] [--skip N]` or `--ds-id ID`        |
+| Describe object                               | `scripts/run-cli browse describe --type {datasource\|schema\|table\|column} --id ID`         |
+| Hierarchical tree                             | `scripts/run-cli browse tree --ds-id ID [--depth 1\|2\|3]`                                   |
+| List data products                            | `scripts/run-cli query list [--limit N] [--skip N]`                                          |
+| Search data products                          | `scripts/run-cli query search --query "keyword" [--marketplace EXTERNAL_MARKETPLACE_ID]`     |
+| Get product details/schema                    | `scripts/run-cli query get --product ID [--schema-only]`                                     |
+| List marketplaces                             | `scripts/run-cli marketplace list`                                                           |
+| Get marketplace details                       | `scripts/run-cli marketplace get --marketplace EXTERNAL_MARKETPLACE_ID`                      |
+| List products in marketplace                  | `scripts/run-cli marketplace products --marketplace EXTERNAL_MARKETPLACE_ID`                 |
+| Search products in marketplace                | `scripts/run-cli marketplace search --marketplace EXTERNAL_MARKETPLACE_ID --query "keyword"` |
+| Search BI reports                             | `scripts/run-cli search "keyword" --type bi_report`                                          |
+| Search BI datasources                         | `scripts/run-cli search "keyword" --type bi_datasource`                                      |
+| Report's upstream datasources                 | `scripts/run-cli bi report-sources --id REPORT_ID [--limit N]`                               |
+| Datasource's downstream reports               | `scripts/run-cli bi source-reports --id DATASOURCE_ID [--limit N]`                           |
+| BI report detail                              | `scripts/run-cli bi describe --type report --id ID`                                          |
+| BI datasource views                           | `scripts/run-cli bi describe --type datasource --id ID`                                      |
+| Generate data product spec from BI datasource | `scripts/run-cli bi product-spec --id DATASOURCE_ID`                                         |
 
 `search` type: Can be one of many options. The most common are "table", "column", "schema", "article", "glossary_term", "datasource", Use `--help` to see all the options.
 
@@ -185,7 +185,7 @@ Route away when the request is outside discovery:
 ## Error and Fallback Handling
 
 - Authentication/setup errors:
-  - Suggest `python -m cli setup check`.
+  - Suggest `scripts/run-cli setup check`.
   - If still blocked, route to setup skill.
 - No search results:
   - Retry with simpler keywords or synonyms.

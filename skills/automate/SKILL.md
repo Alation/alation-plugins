@@ -11,11 +11,11 @@ Create, manage, and debug automated workflows and schedules.
 
 | User Intent | CLI Command |
 |---|---|
-| List workflows | `python -m cli workflow list` |
-| Create a workflow | `python -m cli workflow create` or `python -m cli workflow create --from-template NAME` |
-| Run a workflow | `python -m cli workflow execute ID [--dry-run]` |
-| Schedule a workflow | `python -m cli schedule create` |
-| Enable/disable schedule | `python -m cli schedule enable ID` / `python -m cli schedule disable ID` |
+| List workflows | `scripts/run-cli workflow list` |
+| Create a workflow | `scripts/run-cli workflow create` or `scripts/run-cli workflow create --from-template NAME` |
+| Run a workflow | `scripts/run-cli workflow execute ID [--dry-run]` |
+| Schedule a workflow | `scripts/run-cli schedule create` |
+| Enable/disable schedule | `scripts/run-cli schedule enable ID` / `scripts/run-cli schedule disable ID` |
 | Debug a failing workflow | See Diagnostics section below |
 
 ## Not This Skill
@@ -40,10 +40,10 @@ Before building a flow, identify which agent it should use. Both default agents 
 Use the **configure** skill's agent commands to look up agents:
 ```bash
 # List all agents — look for the one that matches the user's intent
-python -m cli agent list
+scripts/run-cli agent list
 
 # Get a specific agent's config, including its input_json_schema
-python -m cli agent get <agent_uuid>
+scripts/run-cli agent get <agent_uuid>
 ```
 
 The agent's `input_json_schema` tells you exactly what inputs the flow node needs. This matters because different agents require different inputs — a custom agent might need `project_name` and `report_type`, not just `message` and `data_product_id`.
@@ -52,7 +52,7 @@ If the user has been working with a specific custom agent (e.g., they just creat
 
 ### Step 2: Build the flow from a template or from scratch
 
-Three templates are available — list with `python -m cli workflow templates`:
+Three templates are available — list with `scripts/run-cli workflow templates`:
 
 1. **agent-only** — Run a single agent. The simplest flow — good for running any agent on a schedule.
    Required: `name`, `agent_id`, `query`
@@ -63,14 +63,14 @@ Three templates are available — list with `python -m cli workflow templates`:
 3. **query-only** — Query a data product (no email).
    Required: `name`, `agent_id`, `data_product_id`, `query`
 
-Example: `python -m cli workflow create --from-template agent-only --agent-id <uuid> --query "Generate the weekly summary"`
+Example: `scripts/run-cli workflow create --from-template agent-only --agent-id <uuid> --query "Generate the weekly summary"`
 
 If the agent needs additional inputs beyond `message` (check `input_json_schema`), build the flow JSON from scratch instead. See `references/agent-schemas.md` for how to wire agent inputs into flow nodes — it covers both default and custom agents.
 
 ## Scheduling
 
 ```bash
-python -m cli schedule create \
+scripts/run-cli schedule create \
   --workflow-id <uuid> \
   --name "Weekly sales report" \
   --cron "0 9 * * 1" \
@@ -84,21 +84,21 @@ python -m cli schedule create \
 - `--timeout` defaults to 60 minutes
 - `--disabled` creates the schedule in disabled state (useful for testing)
 - Auth is handled automatically — the CLI finds the user's managed auth config
-- To manage existing schedules: `python -m cli schedule list/get/enable/disable/delete`
+- To manage existing schedules: `scripts/run-cli schedule list/get/enable/disable/delete`
 
 ## Diagnostics
 
 When a workflow or schedule isn't working, diagnose using the CLI:
 
 1. **Schedule not firing?**
-   - `python -m cli schedule get <id>` — check `enabled` and `next_run_at`
-   - If disabled, enable with `python -m cli schedule enable <id>`
+   - `scripts/run-cli schedule get <id>` — check `enabled` and `next_run_at`
+   - If disabled, enable with `scripts/run-cli schedule enable <id>`
    - If `next_run_at` is in the past, the scheduler may be stalled — escalate to the user's admin
 
 2. **Execution failing?**
-   - `python -m cli workflow list` — check recent execution status
+   - `scripts/run-cli workflow list` — check recent execution status
    - Auth errors → use the **setup** skill to re-authenticate
-   - Tool/agent not found → verify IDs with `python -m cli tool list` / `python -m cli agent list`
+   - Tool/agent not found → verify IDs with `scripts/run-cli tool list` / `scripts/run-cli agent list`
 
 3. **Issues beyond CLI access** (stuck executions, duplicate runs, scheduler pod health) require admin/SRE intervention. Describe the symptoms to the user and suggest they contact their Alation administrator.
 
@@ -106,19 +106,19 @@ When a workflow or schedule isn't working, diagnose using the CLI:
 
 **Mistake:** Creating a new SMTP tool when the user asks to email results.
 Why it seems reasonable: the flow needs an email tool.
-Instead: List existing tools first (`python -m cli tool list`). There is likely already an SMTP tool configured. Only create a new one if none exists.
+Instead: List existing tools first (`scripts/run-cli tool list`). There is likely already an SMTP tool configured. Only create a new one if none exists.
 
 **Mistake:** Using a default agent when the user has a custom agent for the task.
 Why it seems reasonable: default agents are easier to reference.
-Instead: If the user created or configured a custom agent, use its UUID. Check `python -m cli agent list` to find the right one. Look up its `input_json_schema` to know what inputs the flow node needs.
+Instead: If the user created or configured a custom agent, use its UUID. Check `scripts/run-cli agent list` to find the right one. Look up its `input_json_schema` to know what inputs the flow node needs.
 
 **Mistake:** Hardcoding agent/tool IDs in the flow definition without verifying they exist.
 Why it seems reasonable: the user provided the names.
-Instead: Look up IDs using `python -m cli agent list` or `python -m cli tool list`.
+Instead: Look up IDs using `scripts/run-cli agent list` or `scripts/run-cli tool list`.
 
 **Mistake:** Building a flow without checking what inputs the agent expects.
 Why it seems reasonable: most agents just need `message`.
-Instead: Run `python -m cli agent get <uuid>` and check `input_json_schema`. Custom agents often need additional inputs like `data_product_id` or domain-specific parameters.
+Instead: Run `scripts/run-cli agent get <uuid>` and check `input_json_schema`. Custom agents often need additional inputs like `data_product_id` or domain-specific parameters.
 
 ## Sharing URLs
 

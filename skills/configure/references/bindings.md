@@ -212,7 +212,7 @@ Hidden parameters:
 Check the effective input schema after creation:
 
 ```bash
-python -m cli agent get <id> | jq '.input_json_schema'
+scripts/run-cli agent get <id> | jq '.input_json_schema'
 ```
 
 The schema will show:

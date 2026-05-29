@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Run the bundled Alation CLI from a Codex/Claude plugin checkout.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+find_python() {
+  for candidate in python3 python3.13 python3.12 python3.11 python3.10; do
+    local py
+    py="$(command -v "$candidate" 2>/dev/null)" || continue
+    "$py" -c 'import sys; raise SystemExit(0 if sys.version_info[:2] >= (3, 10) else 1)' 2>/dev/null || continue
+    echo "$py"
+    return 0
+  done
+  return 1
+}
+
+PYTHON="$(find_python)" || {
+  echo "Error: Python 3.10+ is required but not found." >&2
+  exit 1
+}
+
+PYTHONPATH="${PLUGIN_ROOT}${PYTHONPATH:+:${PYTHONPATH}}" exec "$PYTHON" -m cli "$@"

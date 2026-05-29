@@ -19,11 +19,11 @@ Guide the user through creating and validating their `credentials.local` file.
 
 | Task | CLI Command |
 |---|---|
-| Check if setup is complete | `python -m cli setup check` |
-| Save credentials to file | `python -m cli setup credentials --base_url <URL> ...` |
-| Log in via OAuth (local) | `python -m cli setup login` |
-| Log in via OAuth (Cowork/container) | `python -m cli setup login --cowork` |
-| Complete Cowork OAuth with redirect URL | `python -m cli setup login --cowork --code "<URL>"` |
+| Check if setup is complete | `scripts/run-cli setup check` |
+| Save credentials to file | `scripts/run-cli setup credentials --base_url <URL> ...` |
+| Log in via OAuth (local) | `scripts/run-cli setup login` |
+| Log in via OAuth (Cowork/container) | `scripts/run-cli setup login --cowork` |
+| Complete Cowork OAuth with redirect URL | `scripts/run-cli setup login --cowork --code "<URL>"` |
 
 
 ## Process
@@ -31,7 +31,7 @@ Guide the user through creating and validating their `credentials.local` file.
 ### 1. Run `setup check`
 
 ```bash
-python -m cli setup check
+scripts/run-cli setup check
 ```
 
 This returns JSON with five sections: `credentials_file`, `token`, `api`, `environment`, and `ready`.
@@ -64,18 +64,18 @@ Run the credentials command with the values provided:
 
 **OAuth:**
 ```bash
-python -m cli setup credentials --base_url <URL> --client_id <ID> --client_secret <SECRET>
+scripts/run-cli setup credentials --base_url <URL> --client_id <ID> --client_secret <SECRET>
 ```
 
 Or, if there's no client secret:
 
 ```bash
-python -m cli setup credentials --base_url <URL> --client_id <ID>
+scripts/run-cli setup credentials --base_url <URL> --client_id <ID>
 ```
 
 **Username/password:**
 ```bash
-python -m cli setup credentials --base_url <URL> --username <USER> --password <PASS>
+scripts/run-cli setup credentials --base_url <URL> --username <USER> --password <PASS>
 ```
 
 If you ever notice SSL errors or a self-signed certificate, with user approval, add `--disable_ssl_verification`. You must get user approval for this.
@@ -93,7 +93,7 @@ Check `environment.container` from the step 1 `setup check` output to determine 
 **Local environment** (not in Cowork/container):
 
 ```bash
-python -m cli setup login
+scripts/run-cli setup login
 ```
 
 This opens a browser window for the user to log in. On success, prints the check result as JSON.
@@ -102,14 +102,14 @@ This opens a browser window for the user to log in. On success, prints the check
 
 Step 1 — start the flow:
 ```bash
-python -m cli setup login --cowork
+scripts/run-cli setup login --cowork
 ```
 
 This returns JSON with `status: "pending"` and an `auth_url` field. Show the `auth_url` to the user and ask them to complete login in browser. Clearly and concisely explain that the user will need to copy the redirect URL from their browser back into the chat.
 
 Step 2 — the user visits the URL in their browser, authorizes, and gets redirected to a page that fails to load. They paste the full redirect URL into chat. Complete the flow:
 ```bash
-python -m cli setup login --cowork --code "<REDIRECT_URL>"
+scripts/run-cli setup login --cowork --code "<REDIRECT_URL>"
 ```
 
 The `--code` flag accepts either a bare authorization code or a full redirect URL (e.g., `http://127.0.0.1:18722/callback?code=ABC&state=XYZ`).

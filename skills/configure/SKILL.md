@@ -11,10 +11,10 @@ Create and manage agents, tools, LLMs, and data source connections.
 
 | User Intent | CLI Command | When to Use |
 |---|---|---|
-| Manage AI agents | `python -m cli agent` | Create, clone, update, delete, publish agents |
-| Manage tools | `python -m cli tool` | Create HTTP/SMTP tools, update, delete |
-| Manage LLMs | `python -m cli llm` | BYOM setup, credentials, LLM configs |
-| Manage data sources | `python -m cli datasource` | Create, update, delete data source connections |
+| Manage AI agents | `scripts/run-cli agent` | Create, clone, update, delete, publish agents |
+| Manage tools | `scripts/run-cli tool` | Create HTTP/SMTP tools, update, delete |
+| Manage LLMs | `scripts/run-cli llm` | BYOM setup, credentials, LLM configs |
+| Manage data sources | `scripts/run-cli datasource` | Create, update, delete data source connections |
 
 ## Not This Skill
 
@@ -33,12 +33,12 @@ Key distinction: `configure` creates and manages the infrastructure (agents, too
 
 2. **Identify the data and context it needs.** What data products, data sources, or domain knowledge will the agent work with? Some of this becomes fixed tool bindings (step 5), some goes into the agent prompt (step 6).
 
-3. **Select tools.** Browse available tools with `python -m cli tool list` and see `references/default-tools.md` for the selection matrix. Pick the combination needed for the agent's purpose. If a required tool doesn't exist (e.g., an HTTP or SMTP integration), create it first — see Tool Configuration below.
+3. **Select tools.** Browse available tools with `scripts/run-cli tool list` and see `references/default-tools.md` for the selection matrix. Pick the combination needed for the agent's purpose. If a required tool doesn't exist (e.g., an HTTP or SMTP integration), create it first — see Tool Configuration below.
 
 4. **Create the agent config** with the selected tools:
-   `python -m cli agent create < config.json`
+   `scripts/run-cli agent create < config.json`
    Tip: if a default agent is close to what you need, clone it as a starting point:
-   `python -m cli agent clone ID`
+   `scripts/run-cli agent clone ID`
 
 5. **Configure tool parameter bindings.** Bindings control how tool parameters get their values at runtime, constraining what the agent can do for reliability and consistency. For each tool parameter, choose a binding source:
    - **`fixed`**: The value is always the same. Use this to lock a tool to a specific resource like a `data_product_id`. The agent can't change it.
@@ -54,10 +54,10 @@ Key distinction: `configure` creates and manages the infrastructure (agents, too
 7. **Choose the LLM.** Pick a model powerful enough for the task. See `references/default-llms.md` for recommendations by use case.
 
 8. **Test the agent.** Use the **ask** skill to send it a message and verify it works:
-   `echo '{"message": "..."}' | python -m cli chat send <agent_uuid>`
+   `echo '{"message": "..."}' | scripts/run-cli chat send <agent_uuid>`
 
 ### Publishing as Tool
-`python -m cli agent publish ID` makes an agent callable by other agents.
+`scripts/run-cli agent publish ID` makes an agent callable by other agents.
 
 ## Tool Configuration
 
@@ -69,18 +69,18 @@ See `references/http-tools.md` for full guide. Key constraints:
 ### Creating SMTP Tools
 See `references/smtp-tools.md` for provider-specific configs (SendGrid, AWS SES, Gmail, M365).
 
-**Important:** Before creating a new tool, always list existing tools first with `python -m cli tool list`. An SMTP or HTTP tool may already be configured.
+**Important:** Before creating a new tool, always list existing tools first with `scripts/run-cli tool list`. An SMTP or HTTP tool may already be configured.
 
 ## LLM Configuration (BYOM)
 
-1. **Create credentials:** `python -m cli llm creds-create < creds.json`
+1. **Create credentials:** `scripts/run-cli llm creds-create < creds.json`
    See `references/credentials.md` for provider-specific formats (API_KEY, AWS, AZURE, GCP).
-2. **Validate:** `python -m cli llm creds-validate ID --provider PROVIDER --model MODEL`
-3. **Create LLM config:** `python -m cli llm create < config.json` referencing the credential ID. See `references/providers.md` for provider model details.
+2. **Validate:** `scripts/run-cli llm creds-validate ID --provider PROVIDER --model MODEL`
+3. **Create LLM config:** `scripts/run-cli llm create < config.json` referencing the credential ID. See `references/providers.md` for provider model details.
 
 ## Data Source Management
 
-- `python -m cli datasource list` / `python -m cli datasource get ID` / `python -m cli datasource create` / `python -m cli datasource update ID` / `python -m cli datasource delete ID`
+- `scripts/run-cli datasource list` / `scripts/run-cli datasource get ID` / `scripts/run-cli datasource create` / `scripts/run-cli datasource update ID` / `scripts/run-cli datasource delete ID`
 - Note: connector setup, MDE, and QLI configuration require the Alation web UI.
 
 ## Common Mistakes
@@ -91,7 +91,7 @@ Instead: Set `data_product_id` as a `fixed` parameter binding on the agent's too
 
 **Mistake:** Creating a new SMTP tool when one already exists.
 Why it seems reasonable: the user asked to send email.
-Instead: Run `python -m cli tool list` first. Look for existing tools with `tool_type: "SMTP"`.
+Instead: Run `scripts/run-cli tool list` first. Look for existing tools with `tool_type: "SMTP"`.
 
 **Mistake:** Asking the user for an API token or credentials during agent/tool creation.
 Why it seems reasonable: auth might seem like a per-operation concern.

@@ -36,7 +36,21 @@ Register the marketplace and install:
 3. Click the "+" icon next to "Presonal Plugins" and select "Upload plugin"
 4. Drag and drop or browse files to the downloaded zip file to install
 
-#### Codex / Gemini CLI
+#### Codex Plugin
+
+Register the marketplace and install:
+```bash
+codex plugin marketplace add https://github.com/Alation/alation-plugins.git
+codex plugin add alation@alation-plugins
+```
+
+On first use, ask Codex to set up Alation. Codex will prompt for your Alation
+base URL and OAuth client ID, then use a manual OAuth flow where you open an
+authorization URL and paste the final redirect URL back into chat. Depending on
+your Codex sandbox settings, the CLI may ask for approval before making network
+requests to your Alation instance.
+
+#### Codex Agent Skills / Gemini CLI
 
 Install skills using the agent skills installer:
 

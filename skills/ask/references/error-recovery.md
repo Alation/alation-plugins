@@ -92,7 +92,7 @@ Detailed error handling strategies for data product queries.
 - HTTP 401 or 403 error
 
 **This is a fatal error.** Recovery:
-1. Run `python -m cli setup check` to diagnose the issue
+1. Run `scripts/run-cli setup check` to diagnose the issue
 2. Use the setup skill to fix it (expired token → re-login, bad creds → reconfigure)
 3. Do NOT retry without valid credentials
 

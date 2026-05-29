@@ -1,12 +1,12 @@
 # Agent Chat Workflow
 
-Detailed workflow for chatting with Alation AI agents via `python -m cli chat`.
+Detailed workflow for chatting with Alation AI agents via `scripts/run-cli chat`.
 
 ## Agent Selection
 
 ### Common Default Agents
 
-These are frequently used defaults. There may be other default or custom agents better suited to the task — run `python -m cli agent list` to see everything available.
+These are frequently used defaults. There may be other default or custom agents better suited to the task — run `scripts/run-cli agent list` to see everything available.
 
 | Agent | Use When |
 |-------|----------|
@@ -21,7 +21,7 @@ These are frequently used defaults. There may be other default or custom agents 
 
 Custom agents are referenced by their UUID (config ID) instead of a ref name. To discover custom agents:
 ```bash
-python -m cli agent list
+scripts/run-cli agent list
 ```
 
 Then use the agent's `id` field wherever you would use a default agent ref.
@@ -30,10 +30,10 @@ Then use the agent's `id` field wherever you would use a default agent ref.
 
 ```bash
 # Default agent
-python -m cli agent get-default <agent_ref>
+scripts/run-cli agent get-default <agent_ref>
 
 # Custom agent
-python -m cli agent get <agent_config_id>
+scripts/run-cli agent get <agent_config_id>
 ```
 
 This fetches the agent's configuration from the server, including its parameters and tools.
@@ -42,15 +42,15 @@ This fetches the agent's configuration from the server, including its parameters
 
 ```bash
 # Default agent
-echo '{"message": "<user question>"}' | python -m cli chat send <agent_ref>
+echo '{"message": "<user question>"}' | scripts/run-cli chat send <agent_ref>
 
 # Custom agent (by UUID)
-echo '{"message": "<user question>"}' | python -m cli chat send <agent_config_id>
+echo '{"message": "<user question>"}' | scripts/run-cli chat send <agent_config_id>
 ```
 
 For agents that require additional parameters (e.g., `sql_query_agent` needs `data_product_id`):
 ```bash
-echo '{"message": "Show me top customers", "data_product_id": "<id>"}' | python -m cli chat send sql_query_agent
+echo '{"message": "Show me top customers", "data_product_id": "<id>"}' | scripts/run-cli chat send sql_query_agent
 ```
 
 ## Step 3: Handle Streaming Output
@@ -65,7 +65,7 @@ The chat command streams SSE events. Output includes:
 
 To send a follow-up message in the same chat:
 ```bash
-echo '{"message": "Now filter by region"}' | python -m cli chat send <agent_ref> --chat-id <uuid>
+echo '{"message": "Now filter by region"}' | scripts/run-cli chat send <agent_ref> --chat-id <uuid>
 ```
 
 ## Step 5: Handle Pending Tool Approvals
@@ -76,11 +76,11 @@ If the agent requests tool approval, the stream output will indicate pending too
 
 ```bash
 # Get messages from a chat
-python -m cli chat messages <chat_id>
+scripts/run-cli chat messages <chat_id>
 
 # Cancel a running chat
-python -m cli chat cancel <chat_id>
+scripts/run-cli chat cancel <chat_id>
 
 # List recent chats
-python -m cli chat history --limit 10
+scripts/run-cli chat history --limit 10
 ```
