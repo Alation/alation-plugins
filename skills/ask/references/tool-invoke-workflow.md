@@ -1,6 +1,6 @@
 # Tool Invocation Workflow
 
-Detailed workflow for directly invoking Alation AI tools via `python -m cli tool`.
+Detailed workflow for directly invoking Alation AI tools via `scripts/run-cli tool`.
 
 ## When to Use Direct Tool Invocation
 
@@ -14,13 +14,13 @@ Use tool invocation when:
 
 Default tools:
 ```bash
-python -m cli tool list
+scripts/run-cli tool list
 ```
-See `configure/references/default-tools.md` for common default tools, or run `python -m cli tool list` to fetch the full list from the server.
+See `configure/references/default-tools.md` for common default tools, or run `scripts/run-cli tool list` to fetch the full list from the server.
 
 Custom tools:
 ```bash
-python -m cli tool list
+scripts/run-cli tool list
 ```
 Use the tool's `id` field (UUID) wherever you would use a default tool ref.
 
@@ -28,10 +28,10 @@ Use the tool's `id` field (UUID) wherever you would use a default tool ref.
 
 ```bash
 # Default tool
-python -m cli tool schema <tool_ref>
+scripts/run-cli tool schema <tool_ref>
 
 # Custom tool
-python -m cli tool schema <tool_config_id>
+scripts/run-cli tool schema <tool_config_id>
 ```
 
 This fetches the tool's parameter schema from the server.
@@ -41,20 +41,20 @@ This fetches the tool's parameter schema from the server.
 ### Streaming (default)
 ```bash
 # Default tool (by ref name)
-echo '{"search_term": "sales tables"}' | python -m cli tool call search_catalog_tool
+echo '{"search_term": "sales tables"}' | scripts/run-cli tool call search_catalog_tool
 
 # Custom tool (by UUID)
-echo '{"param": "value"}' | python -m cli tool call <tool_config_id>
+echo '{"param": "value"}' | scripts/run-cli tool call <tool_config_id>
 ```
 
 ### With Existing Chat ID
 ```bash
-echo '{"search_term": "sales"}' | python -m cli tool call search_catalog_tool --chat-id <uuid>
+echo '{"search_term": "sales"}' | scripts/run-cli tool call search_catalog_tool --chat-id <uuid>
 ```
 
 ### Async (for long-running operations)
 ```bash
-echo '{"search_term": "sales"}' | python -m cli tool call-async search_catalog_tool
+echo '{"search_term": "sales"}' | scripts/run-cli tool call-async search_catalog_tool
 ```
 
 ## Tool Intent Matching

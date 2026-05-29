@@ -11,10 +11,10 @@ Manage data products, publish to marketplaces, and enrich catalog metadata.
 
 | User Intent | CLI Command | When to Use |
 |---|---|---|
-| Create/update/delete data products | `python -m cli product` | Managing product specs and versions |
-| Publish/unpublish to marketplace | `python -m cli marketplace publish/unpublish` | Making products discoverable |
-| Manage marketplaces themselves | `python -m cli marketplace` | Creating or configuring marketplaces |
-| Add descriptions/tags/custom fields | `python -m cli enrich` | Enriching metadata on any catalog object |
+| Create/update/delete data products | `scripts/run-cli product` | Managing product specs and versions |
+| Publish/unpublish to marketplace | `scripts/run-cli marketplace publish/unpublish` | Making products discoverable |
+| Manage marketplaces themselves | `scripts/run-cli marketplace` | Creating or configuring marketplaces |
+| Add descriptions/tags/custom fields | `scripts/run-cli enrich` | Enriching metadata on any catalog object |
 
 ## Not This Skill
 
@@ -33,34 +33,34 @@ Key distinction: `curate` manages data product definitions and metadata. `ask` r
 
 1. **Review the spec** with the user. Confirm product ID, name, record sets, and schema look correct.
 2. **Save the spec** as a JSON file (e.g. `spec.json`), then **create the product**:
-   `python -m cli product create < spec.json`
+   `scripts/run-cli product create < spec.json`
    If the spec is in YAML (e.g. from `bi product-spec`), convert it to JSON before saving.
 3. Continue to **Mark version ready** and **Publish** below.
 
 ### When building from scratch
 
 1. **Create product** with minimal spec (`"schema": []`):
-   `python -m cli product create < spec.json`
+   `scripts/run-cli product create < spec.json`
    See `references/product-schema.md` for the JSON schema.
 
 2. **Discover columns** by querying the product (use the `ask` skill) or browsing the data source (use the `explore` skill).
 
 3. **Update spec** with discovered schema:
-   `python -m cli product update < updated_spec.json`
+   `scripts/run-cli product update < updated_spec.json`
 
 ### After creation (both paths)
 
 4. **Mark version ready:**
-   `python -m cli product update-version PRODUCT_ID VERSION_ID --status ready`
+   `scripts/run-cli product update-version PRODUCT_ID VERSION_ID --status ready`
 
 5. **Publish to marketplace:**
-   `python -m cli marketplace publish --marketplace EXTERNAL_MARKETPLACE_ID --product ID`
+   `scripts/run-cli marketplace publish --marketplace EXTERNAL_MARKETPLACE_ID --product ID`
 
 ## Metadata Enrichment
 
-- `python -m cli enrich list-fields` — see available custom fields
-- `python -m cli enrich get-values --otype table --oid 123` — see current values
-- `python -m cli enrich set-field --otype table --oid 123 --field-id 456 --value "description text"`
+- `scripts/run-cli enrich list-fields` — see available custom fields
+- `scripts/run-cli enrich get-values --otype table --oid 123` — see current values
+- `scripts/run-cli enrich set-field --otype table --oid 123 --field-id 456 --value "description text"`
 - Object types: `table`, `schema`, `attribute` (column), `data` (datasource)
 
 ## Common Mistakes

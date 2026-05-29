@@ -1,6 +1,6 @@
 # Data Product Query Workflow
 
-Detailed workflow for querying data products via `python -m cli query`.
+Detailed workflow for querying data products via `scripts/run-cli query`.
 
 ## Prerequisite: Product ID
 
@@ -9,7 +9,7 @@ This workflow assumes you already have a data product ID. If the user hasn't ide
 ## Step 1: Fetch and Analyze Schema
 
 ```bash
-python -m cli query get --product "<product_id>" --schema-only
+scripts/run-cli query get --product "<product_id>" --schema-only
 ```
 
 **Analyze the schema:**
@@ -34,12 +34,12 @@ Based on the schema, construct a SQL query:
 ## Step 3: Execute the Query
 
 ```bash
-python -m cli query execute --product "<product_id>" --sql "<your_sql_query>" --timeout 60
+scripts/run-cli query execute --product "<product_id>" --sql "<your_sql_query>" --timeout 60
 ```
 
 For long-running queries:
 ```bash
-python -m cli query execute-async --product "<product_id>" --sql "<your_sql_query>"
+scripts/run-cli query execute-async --product "<product_id>" --sql "<your_sql_query>"
 ```
 
 ## Step 4: Summarize Results
@@ -49,7 +49,7 @@ Transform raw query results into a clear, actionable insight.
 ## Validation (Optional)
 
 ```bash
-python -m cli query validate --product "<product_id>" --sql "<your_sql_query>"
+scripts/run-cli query validate --product "<product_id>" --sql "<your_sql_query>"
 ```
 
 ## Error Recovery Quick Reference

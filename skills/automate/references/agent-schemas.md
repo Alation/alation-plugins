@@ -32,7 +32,7 @@ Tools produce output with the key `__tool_output__`. When referencing tool outpu
 
 ## Default Agents
 
-These are examples of commonly used default agents in workflows. There are other default and custom agents available — run `python -m cli agent list` to see all of them.
+These are examples of commonly used default agents in workflows. There are other default and custom agents available — run `scripts/run-cli agent list` to see all of them.
 
 ### data_product_query_agent
 
@@ -141,10 +141,10 @@ Custom agents work in workflows exactly like default agents — set `agent_id` i
 Use the **configure** skill's agent scripts (not part of this skill):
 ```bash
 # List all agents (default and custom)
-python -m cli agent list
+scripts/run-cli agent list
 
 # Get a specific custom agent's config
-python -m cli agent get <agent_uuid>
+scripts/run-cli agent get <agent_uuid>
 ```
 
 The response includes an `input_json_schema` field that describes exactly what inputs the agent expects. Use this to build the `inputs` section of the workflow node.
@@ -243,13 +243,13 @@ Use the CLI to find IDs:
 Use the **configure** skill's scripts (not part of this skill):
 ```bash
 # List agents with their IDs and refs
-python -m cli agent list
+scripts/run-cli agent list
 
 # Get default agent by reference
-python -m cli agent get-default data_product_query_agent
+scripts/run-cli agent get-default data_product_query_agent
 
 # List tools
-python -m cli tool list
+scripts/run-cli tool list
 ```
 
 ## Common Agent References

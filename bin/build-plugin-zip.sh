@@ -26,9 +26,12 @@ zip -r "$OUTPUT" . \
   -x "*.pyc" \
   -x ".git/*" \
   -x ".DS_Store" \
+  -x "*/.DS_Store" \
+  -x ".agents/*" \
   -x "dist/*" \
   -x "bin/*" \
   -x ".github/*" \
+  -x "plugins/*" \
   -x ".worktrees/*" \
   -x ".claude/*" \
   -x ".vscode/*"

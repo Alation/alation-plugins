@@ -4,7 +4,7 @@ These are commonly used system-provided agents. This is not an exhaustive list �
 available agents (including custom agents), run:
 
 ```bash
-python -m cli agent list
+scripts/run-cli agent list
 ```
 
 Default agents can be used directly or cloned to create custom variations.
@@ -224,27 +224,27 @@ Default agents can be used directly or cloned to create custom variations.
 ### Get Default Agent Details
 
 ```bash
-python -m cli agent get-default sql_query_agent
+scripts/run-cli agent get-default sql_query_agent
 ```
 
 ### Clone for Customization
 
 ```bash
 # Get the ID first
-python -m cli agent get-default catalog_search_agent
+scripts/run-cli agent get-default catalog_search_agent
 
 # Clone it
-python -m cli agent clone <agent-id>
+scripts/run-cli agent clone <agent-id>
 
 # Customize the clone
 echo '{"name": "My Custom Search", "prompt": "..."}' | \
-  python -m cli agent update <new-id>
+  scripts/run-cli agent update <new-id>
 ```
 
 ### Selecting the Right Agent
 
 This is a quick reference for common use cases. There may be other default or custom agents
-better suited to your task — run `python -m cli agent list` to see everything available.
+better suited to your task — run `scripts/run-cli agent list` to see everything available.
 
 | Need | Agent |
 |------|-------|

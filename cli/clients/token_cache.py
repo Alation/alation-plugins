@@ -19,10 +19,14 @@ _CACHE_DIR = Path.home() / ".alation"
 def _default_cache_path() -> Path:
     """Determine the token cache file path.
 
-    In claude cowork container environment, persist alongside
-    credentials.local so the cache survives across sessions.
+    In hosted/sandboxed agent environments, persist alongside
+    credentials.local so the cache survives across sessions and stays writable.
     """
-    if os.environ.get("CLAUDE_CODE_IS_COWORK"):
+    if (
+        os.environ.get("CLAUDE_CODE_IS_COWORK")
+        or os.environ.get("CODEX_SHELL")
+        or os.environ.get("CODEX_SANDBOX")
+    ):
 
         creds_file = find_credentials_file()
         if creds_file is not None:

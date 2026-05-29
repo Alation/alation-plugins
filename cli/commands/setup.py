@@ -151,8 +151,10 @@ def cmd_check(_args) -> int:
 
 
 def _is_cowork_container() -> bool:
-    """Detect whether we're running in a Cowork container where localhost isn't shared."""
+    """Detect hosted/sandboxed agents where localhost/browser auth is unreliable."""
     if os.environ.get("CLAUDE_CODE_IS_COWORK"):
+        return True
+    if os.environ.get("CODEX_SHELL") or os.environ.get("CODEX_SANDBOX"):
         return True
     return False
 

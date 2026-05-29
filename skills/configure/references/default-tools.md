@@ -4,7 +4,7 @@ These are commonly used system-provided tools. This is not an exhaustive list â€
 available tools (including custom tools), run:
 
 ```bash
-python -m cli tool list
+scripts/run-cli tool list
 ```
 
 ## Key Tools
@@ -57,8 +57,8 @@ More tools = more prompt tokens and harder for LLM to choose correctly. Only inc
 
 ```bash
 # List all tools (default and custom)
-python -m cli tool list
+scripts/run-cli tool list
 
 # Filter for specific tool
-python -m cli tool list | jq '.[] | select(.function_name == "sql_execution_tool")'
+scripts/run-cli tool list | jq '.[] | select(.function_name == "sql_execution_tool")'
 ```

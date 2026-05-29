@@ -128,10 +128,10 @@ Before using BYOM credentials, validate them:
 
 ```bash
 # List available models (if supported by provider)
-python -m cli llm creds-validate <id> --provider openai
+scripts/run-cli llm creds-validate <id> --provider openai
 
 # Validate specific model
-python -m cli llm creds-validate <id> --provider openai --model gpt-4o
+scripts/run-cli llm creds-validate <id> --provider openai --model gpt-4o
 ```
 
 Validation modes:

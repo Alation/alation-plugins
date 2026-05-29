@@ -17,7 +17,7 @@
 **Cause:** Authentication failed or user lacks permissions.
 
 **Recovery:**
-1. Run `python -m cli setup check` to diagnose authentication status
+1. Run `scripts/run-cli setup check` to diagnose authentication status
 2. If auth is the issue, use the setup skill to re-authenticate
 3. Confirm the user has product admin or editor role
 4. For localhost, no auth is required
@@ -60,7 +60,7 @@
 **Version status stuck on "draft":**
 Use `update-version` to change status to `ready`:
 ```bash
-python -m cli product update-version <product_id> <version_id> --status ready
+scripts/run-cli product update-version <product_id> <version_id> --status ready
 ```
 
 **Cannot publish to marketplace:**
@@ -90,7 +90,7 @@ Product IDs use a namespace:name format (e.g., `finance:quarterly_sales`). The n
 **Cause:** Authentication failed or user lacks permissions.
 
 **Recovery:**
-1. Run `python -m cli setup check` to diagnose authentication status
+1. Run `scripts/run-cli setup check` to diagnose authentication status
 2. If auth is the issue, use the setup skill to re-authenticate
 3. Confirm the user has marketplace admin or maintainer role
 4. For localhost, no auth is required
@@ -109,16 +109,16 @@ Product IDs use a namespace:name format (e.g., `finance:quarterly_sales`). The n
 **Recovery:**
 1. Get the marketplace to see its `minimumStandard` requirements:
    ```bash
-   python -m cli marketplace get --marketplace <id>
+   scripts/run-cli marketplace get --marketplace <id>
    ```
-2. Use `python -m cli product check-standards` to see which checks fail
+2. Use `scripts/run-cli product check-standards` to see which checks fail
 3. Update the data product to meet the standards
 4. Retry publishing
 
 ### Common Scenarios
 
 **Publishing fails silently:**
-If `publish` returns success but the product doesn't appear in `list-products`, verify the product version status is `ready` (not `draft`). Use `python -m cli product update-version` to change status.
+If `publish` returns success but the product doesn't appear in `list-products`, verify the product version status is `ready` (not `draft`). Use `scripts/run-cli product update-version` to change status.
 
 **Search returns no results:**
 The search endpoint uses AI to process natural language queries. Try:

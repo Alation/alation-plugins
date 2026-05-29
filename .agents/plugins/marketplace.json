@@ -1,0 +1,20 @@
+{
+  "name": "alation-plugins",
+  "interface": {
+    "displayName": "Alation Plugins"
+  },
+  "plugins": [
+    {
+      "name": "alation",
+      "source": {
+        "source": "local",
+        "path": "./plugins/alation"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -142,7 +142,7 @@ If using custom LLM credentials:
 1. Set up credentials first:
    ```bash
    echo '{"name": "My OpenAI", "creds_type": "API_KEY", "api_key": "..."}' | \
-     python -m cli llm creds-create
+     scripts/run-cli llm creds-create
    ```
 
 2. Create LLM config:
@@ -152,7 +152,7 @@ If using custom LLM credentials:
      "provider": "openai",
      "llm_credentials_id": "<creds-id>",
      "model_name": "gpt-4o"
-   }' | python -m cli llm create
+   }' | scripts/run-cli llm create
    ```
 
 3. Use the new LLM in your agent config.
@@ -161,8 +161,8 @@ If using custom LLM credentials:
 
 ```bash
 # List all LLMs
-python -m cli llm list
+scripts/run-cli llm list
 
 # Find specific LLM by name pattern
-python -m cli llm list | jq '.data[] | select(.name | contains("GPT-5"))'
+scripts/run-cli llm list | jq '.data[] | select(.name | contains("GPT-5"))'
 ```
