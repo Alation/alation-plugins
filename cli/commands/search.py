@@ -1,6 +1,9 @@
 """Catalog search command."""
 
-from cli.clients.base import print_json
+import json
+import sys
+
+from cli.clients.base import print_error, print_json
 from cli.clients.search import SearchClient
 from cli.commands._helpers import resolve_positional_or_flag
 
@@ -15,7 +18,9 @@ def register(group_parsers):
         "--type",
         "--otype",
         "-t",
-        help="""Filter by type. Accepted types are:
+        dest="types",
+        action="append",
+        help="""Filter by type (repeatable, e.g. --type table --type view). Accepted types are:
 - table
 - procedure
 - function
@@ -60,17 +65,97 @@ def register(group_parsers):
 - policy_group
     """,
     )
+    parser.add_argument(
+        "--filters",
+        help='Raw JSON array of {"filter_id","filter_values"} objects. '
+        "Resolve IDs with search-fields / search-values.",
+    )
+    parser.add_argument(
+        "--ranges",
+        help='Raw JSON array of {"field","start","end"} date-range objects '
+        "(ISO YYYY-MM-DD; field = ts_updated, ts_created, or a custom DATE field id).",
+    )
+    parser.add_argument("--starred", action="store_true", help="Only bookmarked/starred items")
+    parser.add_argument("--watching", action="store_true", help="Only watched items")
+    parser.add_argument("--recent", action="store_true", help="Only recently-visited items")
+    parser.add_argument(
+        "--domain",
+        dest="domains",
+        action="append",
+        help="Scope to a domain ID (repeatable)",
+    )
     parser.set_defaults(func=cmd_search)
+
+    fields_p = group_parsers.add_parser(
+        "search-fields", help="Discover fields usable as search filters"
+    )
+    fields_p.add_argument("query", nargs="?", help="Term to match field names")
+    fields_p.add_argument("--query", "-q", dest="query_flag", help="Term to match field names")
+    fields_p.add_argument("--limit", "-l", type=int, default=10, help="Max results")
+    fields_p.set_defaults(func=cmd_search_fields)
+
+    values_p = group_parsers.add_parser(
+        "search-values", help="Resolve filter values (e.g. a data source name) to filter IDs"
+    )
+    values_p.add_argument("--field", "-f", required=True, help="Field ID (int custom field or built-in facet key like 'ds')")
+    values_p.add_argument("query", nargs="?", help="Term to match values")
+    values_p.add_argument("--query", "-q", dest="query_flag", help="Term to match values")
+    values_p.add_argument("--builtin", action="store_true", help="Field is a built-in facet (is_builtin=True)")
+    values_p.add_argument("--limit", "-l", type=int, default=10, help="Max results")
+    values_p.set_defaults(func=cmd_search_values)
+
+
+def _parse_json_arg(raw: str | None, label: str):
+    """Parse a raw JSON array CLI argument, exiting 2 on invalid input."""
+    if raw is None:
+        return None
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError as e:
+        print_error(f"--{label} must be valid JSON: {e}")
+        sys.exit(2)
+    if not isinstance(parsed, list):
+        print_error(f"--{label} must be a JSON array, got {type(parsed).__name__}")
+        sys.exit(2)
+    return parsed
 
 
 def cmd_search(args) -> int:
     query = resolve_positional_or_flag(args, "query", "query_flag", "query")
-    object_types = [args.type] if args.type else None
+    filters = _parse_json_arg(args.filters, "filters")
+    ranges = _parse_json_arg(args.ranges, "ranges")
     with SearchClient() as client:
         result = client.search(
             query,
             limit=args.limit,
-            object_types=object_types,
+            object_types=args.types,
+            filters=filters,
+            ranges=ranges,
+            starred=args.starred or None,
+            watching=args.watching or None,
+            recent=args.recent or None,
+            domain_ids=args.domains,
+        )
+        print_json(result)
+    return 0
+
+
+def cmd_search_fields(args) -> int:
+    query = resolve_positional_or_flag(args, "query", "query_flag", "query")
+    with SearchClient() as client:
+        result = client.search_filter_fields(query, limit=args.limit)
+        print_json(result)
+    return 0
+
+
+def cmd_search_values(args) -> int:
+    query = resolve_positional_or_flag(args, "query", "query_flag", "query")
+    field_id: int | str = args.field
+    if isinstance(field_id, str) and field_id.isdigit():
+        field_id = int(field_id)
+    with SearchClient() as client:
+        result = client.search_filter_values(
+            field_id, query, limit=args.limit, is_builtin=args.builtin
         )
         print_json(result)
     return 0
