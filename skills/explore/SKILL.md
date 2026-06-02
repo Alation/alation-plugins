@@ -52,7 +52,9 @@ Use these commands to execute the workflow:
 
 | Goal                                          | CLI Command                                                                                |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Keyword discovery                             | `scripts/run-cli search "keyword" [--limit N] [--type <object_type>]`                        |
+| Keyword discovery                             | `scripts/run-cli search "keyword" [--limit N] [--type T (repeatable)] [--starred] [--watching] [--recent] [--domain ID] [--filters JSON] [--ranges JSON]` |
+| Discover filterable fields                    | `scripts/run-cli search-fields "field name" [--limit N]`                                     |
+| Resolve filter values to IDs                  | `scripts/run-cli search-values --field FIELD_ID "value name" [--builtin] [--limit N]`        |
 | List data sources                             | `scripts/run-cli browse sources [--limit N] [--skip N]`                                      |
 | List schemas in source                        | `scripts/run-cli browse schemas --ds-id ID [--limit N] [--skip N]`                           |
 | List tables                                   | `scripts/run-cli browse tables --schema-id ID [--limit N] [--skip N]` or `--ds-id ID`        |
@@ -78,6 +80,34 @@ Use these commands to execute the workflow:
 
 `browse tree` depth: 1 = schemas only, 2 = schemas + tables, 3 = schemas + tables + columns.
 Always pass `--depth 1` explicitly on unfamiliar sources — depth 3 on a large source can return hundreds of objects.
+
+## Filtering search results
+
+`search` mirrors the Alation UI's filters. Beyond `--type`, you can scope by
+data source, author, schema, custom fields, dates, and user state.
+
+**Built-in filters take numeric IDs, not names.** To filter by "data source =
+Snowflake Prod" you must first resolve the name to an ID:
+
+1. `search-fields "data source"` — find the filter field and check its
+   `is_builtin`. For built-in facets, the `filter_id` is the string key
+   (`ds` for data source, plus `author`, `schema_name`, `steward`). For
+   custom fields, the `filter_id` is the numeric `id` from the result.
+2. `search-values --field ds --builtin "Snowflake"` — resolve the name to a
+   numeric ID. Use `--builtin` whenever the field's `is_builtin` was true.
+3. `search "orders" --filters '[{"filter_id":"ds","filter_values":["14"]}]'` —
+   run the filtered search. `filter_values` must be the resolved IDs.
+
+Date ranges use `--ranges` with ISO dates:
+`--ranges '[{"field":"ts_updated","start":"2025-01-01","end":"2025-06-01"}]'`
+(`field` = `ts_updated`, `ts_created`, or a custom DATE field id).
+
+User-state toggles need no resolution: `--starred`, `--watching`, `--recent`.
+Scope to domains with `--domain ID` (repeatable).
+
+`search` returns `results` plus a `table_view_url` — a link into the Alation UI
+full-search view with the same filters applied. Offer it to the user as
+"view all results in Alation" when results are truncated or they want the UI.
 
 ## Standard Workflow
 
