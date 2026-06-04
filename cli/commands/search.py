@@ -11,8 +11,8 @@ from cli.commands._helpers import resolve_positional_or_flag
 def register(group_parsers):
     # We use nargs="?" to support positional or flagged args (--query)
     parser = group_parsers.add_parser("search", help="Search the Alation catalog")
-    parser.add_argument("query", nargs="?", help="Search query")
-    parser.add_argument("--query", "-q", dest="query_flag", help="Search query")
+    parser.add_argument("query", nargs="?", help="Search query (optional; omit to browse by filter)")
+    parser.add_argument("--query", "-q", dest="query_flag", help="Search query (optional)")
     parser.add_argument("--limit", "-l", type=int, default=50, help="Max results")
     parser.add_argument(
         "--type",
@@ -121,7 +121,9 @@ def _parse_json_arg(raw: str | None, label: str):
 
 
 def cmd_search(args) -> int:
-    query = resolve_positional_or_flag(args, "query", "query_flag", "query")
+    # Query is optional: an empty term with filters browses the catalog, and
+    # an empty term with no filters returns top results (like an empty UI search).
+    query = args.query or args.query_flag or ""
     filters = _parse_json_arg(args.filters, "filters")
     ranges = _parse_json_arg(args.ranges, "ranges")
     with SearchClient() as client:
