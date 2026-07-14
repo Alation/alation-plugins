@@ -26,19 +26,16 @@ jobs:
 
       - name: Validate Codex plugin manifest
         run: |
+          test -z "$(find . -path ./.git -prune -o -type l -print -quit)"
           test -f .codex-plugin/plugin.json
           test -f .agents/plugins/marketplace.json
-          test "$(jq -r '.plugins[0].source.path' .agents/plugins/marketplace.json)" = "./plugins/alation"
+          test "$(jq -r '.plugins[0].source.path' .agents/plugins/marketplace.json)" = "./"
           test "$(jq -r '.name' .codex-plugin/plugin.json)" = "alation"
-          test "$(jq -r '.name' plugins/alation/.codex-plugin/plugin.json)" = "alation"
           test "$(jq -r '.skills' .codex-plugin/plugin.json)" = "./skills/"
           test "$(jq -r '.version' .codex-plugin/plugin.json)" = "$(jq -r '.version' .claude-plugin/plugin.json)"
           test -f assets/alation-icon.png
-          test -f plugins/alation/assets/alation-icon.png
           test -x scripts/run-cli
           test -x skills/setup/scripts/run-cli
-          test -x plugins/alation/scripts/run-cli
-          test -x plugins/alation/skills/setup/scripts/run-cli
 
       - name: Build plugin zip
         run: ./bin/build-plugin-zip.sh

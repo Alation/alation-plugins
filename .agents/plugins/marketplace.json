@@ -8,7 +8,7 @@
       "name": "alation",
       "source": {
         "source": "local",
-        "path": "./plugins/alation"
+        "path": "./"
       },
       "policy": {
         "installation": "AVAILABLE",
