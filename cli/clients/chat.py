@@ -9,7 +9,7 @@ import uuid
 from collections.abc import Iterator
 from typing import Any, cast
 
-from .base import AlationClient
+from .base import ALATION_PLUGIN_STREAM_TAG, AlationClient
 
 
 def _is_config_id(ref: str) -> bool:
@@ -186,7 +186,7 @@ class ChatClient(AlationClient):
         if not self._opener:
             raise RuntimeError("Client not initialized. Use 'with' context manager.")
 
-        params = {}
+        params: dict[str, Any] = {"tags": [ALATION_PLUGIN_STREAM_TAG]}
         if chat_id:
             params["chat_id"] = chat_id
 
