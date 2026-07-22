@@ -52,6 +52,7 @@ ERR_OAUTH_LOGIN_REQUIRED = (
     "Run 'python -m cli setup login' to authenticate."
 )
 ERR_CLIENT_NOT_INIT = "Client not initialized. Use 'with' context manager."
+ALATION_PLUGIN_STREAM_TAG = "source:alation_plugin"
 
 
 class AlationClient:

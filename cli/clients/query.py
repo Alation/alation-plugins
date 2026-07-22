@@ -12,7 +12,7 @@ import time
 import uuid
 from typing import Any, cast
 
-from .base import AlationClient
+from .base import ALATION_PLUGIN_STREAM_TAG, AlationClient
 from . import url_helper
 
 _API_BASE = "/integration/data-products/api/v1"
@@ -121,7 +121,13 @@ class DataProductQueryClient(AlationClient):
         result: dict[str, Any] = {"content": None, "metadata": None}
         text_parts: list[str] = []
 
-        response = self._stream_request("POST", endpoint, json_data=payload, timeout=timeout_secs)
+        response = self._stream_request(
+            "POST",
+            endpoint,
+            json_data=payload,
+            params={"tags": [ALATION_PLUGIN_STREAM_TAG]},
+            timeout=timeout_secs,
+        )
         for raw_bytes in response:
             line = raw_bytes.decode("utf-8").strip()
             if not line or line.startswith(":"):
