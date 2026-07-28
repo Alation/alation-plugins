@@ -52,7 +52,6 @@ ERR_OAUTH_LOGIN_REQUIRED = (
     "Run 'python -m cli setup login' to authenticate."
 )
 ERR_CLIENT_NOT_INIT = "Client not initialized. Use 'with' context manager."
-ALATION_PLUGIN_STREAM_TAG = "source:alation_plugin"
 
 
 class AlationClient:
@@ -140,9 +139,10 @@ class AlationClient:
         pass
 
     def _headers(self) -> dict[str, str]:
+        headers = {"Ai-Surface": "alation_plugin"}
         if self._bearer_token:
-            return {"Authorization": f"Bearer {self._bearer_token}"}
-        return {}
+            headers["Authorization"] = f"Bearer {self._bearer_token}"
+        return headers
 
     def _url(self, path: str) -> str:
         if path.startswith("/integration/"):
