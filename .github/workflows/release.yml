@@ -33,6 +33,9 @@ jobs:
           test "$(jq -r '.name' .codex-plugin/plugin.json)" = "alation"
           test "$(jq -r '.skills' .codex-plugin/plugin.json)" = "./skills/"
           test "$(jq -r '.version' .codex-plugin/plugin.json)" = "$(jq -r '.version' .claude-plugin/plugin.json)"
+          test -f .mcp.json
+          test "$(jq -r '.mcpServers' .codex-plugin/plugin.json)" = "./.mcp.json"
+          test "$(jq -r '.mcpServers["alation-docs"].url' .mcp.json)" = "https://documentation.alation.com/mcp"
           test -f assets/alation-icon.png
           test -x scripts/run-cli
           test -x skills/setup/scripts/run-cli

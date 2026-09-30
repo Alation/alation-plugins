@@ -126,6 +126,12 @@ Send me a summary of last week's sales every Monday
 ```
 Add a descriptions to the customer orders data product
 ```
+```
+How do I register an OAuth client in Alation?
+```
+```
+What's the request body for the create data product API?
+```
 
 ## Skills
 
@@ -137,3 +143,21 @@ Add a descriptions to the customer orders data product
 | **automate** | Build, run, and schedule recurring workflows |
 | **curate** | Manage data products, publish to marketplaces, enrich catalog metadata |
 | **setup** | Configure credentials and authenticate with your Alation instance |
+| **docs** | Search Alation product documentation and REST API reference via the Alation Docs MCP server |
+
+### Alation Docs MCP Server
+
+The plugin bundles the public Alation Docs MCP server (`https://documentation.alation.com/mcp`, streamable HTTP, no auth). It is configured automatically for Claude Code, Cowork, and Codex plugin installs via `.mcp.json`. Tools:
+
+- `search_alation_docs`: semantic search across product docs, API guides, API reference, and recipes
+- `query_docs_filesystem_alation_docs`: read-only shell (`rg`, `cat`, `jq`, ...) over doc pages and OpenAPI specs
+- `submit_feedback`: sends feedback about a doc page to Alation's docs team. Only runs with your confirmation.
+
+For portable agent skills (Gemini CLI, Cortex, and others), add the server manually in your client's MCP settings using the URL above. Without it, the `docs` skill falls back to the `alamigo_agent`. Client commands:
+
+```bash
+# Claude Code
+claude mcp add --transport http alation-docs https://documentation.alation.com/mcp
+# Codex
+codex mcp add alation-docs --url https://documentation.alation.com/mcp
+```

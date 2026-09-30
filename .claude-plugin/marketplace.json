@@ -9,7 +9,7 @@
     {
       "name": "alation",
       "source": "./",
-      "description": "Query data, explore catalogs, configure AI agents, automate workflows, and manage data products",
+      "description": "Query data, explore catalogs, configure AI agents, automate workflows, manage data products, and look up product and API docs",
       "keywords": ["data-catalog", "data-products", "agents", "workflows", "tools", "alation"]
     }
   ]

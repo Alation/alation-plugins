@@ -19,6 +19,9 @@ rm -f "$OUTPUT"
 cd "$REPO_ROOT"
 zip -r "$OUTPUT" . \
   -x ".env" \
+  -x "credentials.local" \
+  -x "token_cache.json" \
+  -x "*/token_cache.json" \
   -x ".venv/*" \
   -x ".pytest_cache/*" \
   -x "__pycache__/*" \
