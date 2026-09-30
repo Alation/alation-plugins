@@ -73,6 +73,10 @@ Instead: Check version status first. Mark it as "ready" before publishing.
 Why it seems reasonable: the `dataAccess[].type` field IS uppercase.
 Instead: `deliverySystems.type` must be lowercase `"sql"`. The `dataAccess[].type` must be uppercase `"SQL"`. Yes, this is inconsistent — see `references/product-schema.md`.
 
+**Mistake:** Guessing at data product spec fields or API behavior after an unexpected validation error.
+Why it seems reasonable: the error message names the field.
+Instead: Check the documented contract via the `docs` skill before guessing.
+
 ## Next Steps
 
 After finishing curation, suggest next steps to the user — but don't proceed without

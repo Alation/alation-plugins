@@ -120,6 +120,10 @@ Instead: Look up IDs using `scripts/run-cli agent list` or `scripts/run-cli tool
 Why it seems reasonable: most agents just need `message`.
 Instead: Run `scripts/run-cli agent get <uuid>` and check `input_json_schema`. Custom agents often need additional inputs like `data_product_id` or domain-specific parameters.
 
+**Mistake:** Guessing workflow or schedule fields after an unexpected API error.
+Why it seems reasonable: the flow JSON looks close to correct.
+Instead: Check the documented workflows API contract via the `docs` skill first.
+
 ## Sharing URLs
 
 After creating a workflow, share the `url` from the CLI response so the user can view it in the Alation UI. Schedule responses include a `workflow_url` pointing to the parent workflow.

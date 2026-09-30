@@ -15,7 +15,7 @@ These are frequently used defaults. There may be other default or custom agents 
 | `deep_research_agent` | Multi-step data research with context |
 | `charting_agent` | Interactive chart creation |
 | `data_product_query_agent` | Query data products with automatic discovery |
-| `alamigo_agent` | General help questions about the Alation product (not for data queries) |
+| `alamigo_agent` | In-product assistant for Alation help (not for data queries). For product/API docs questions prefer the `docs` skill; use this as fallback |
 
 ### Custom Agents
 

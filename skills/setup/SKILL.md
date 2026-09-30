@@ -161,6 +161,10 @@ Instead: Always ask. Credentials must come directly from the user.
 Why it seems reasonable: starting fresh feels safer.
 Instead: Ask for just the corrected value and re-run `setup credentials` with all values.
 
+**Mistake:** Explaining OAuth client registration from memory.
+Why it seems reasonable: the steps seem standard.
+Instead: Look up the current registration steps via the `docs` skill and cite the link.
+
 ## Red Flags
 - "Let me try connecting to the API directly" — always use the CLI, never raw API calls.
 - "I'll use a default client ID" — there is no default. Ask the user.

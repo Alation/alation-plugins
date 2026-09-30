@@ -106,6 +106,10 @@ Instead: Run `scripts/run-cli tool list` first. Look for existing tools with `to
 Why it seems reasonable: auth might seem like a per-operation concern.
 Instead: Authentication is handled automatically by credentials.local. If auth fails, direct the user to the `setup` skill.
 
+**Mistake:** Guessing at agent, tool, or LLM config fields when the API rejects a payload.
+Why it seems reasonable: the validation error usually hints at the fix.
+Instead: Check the documented request schema via the `docs` skill before retrying.
+
 ## Next Steps
 
 After finishing configuration, suggest next steps to the user — but don't proceed without their go-ahead unless their original request already implies it.

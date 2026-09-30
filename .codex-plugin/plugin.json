@@ -1,7 +1,7 @@
 {
   "name": "alation",
-  "version": "1.0.1",
-  "description": "Alation platform skills: query data, explore catalogs, automate workflows, curate data products, and configure AI agents.",
+  "version": "1.1.0",
+  "description": "Alation platform skills: query data, explore catalogs, automate workflows, curate data products, configure AI agents, and look up Alation product and API documentation.",
   "author": {
     "name": "Alation AI",
     "email": "alation-ai-squad@alation.com",
@@ -16,13 +16,15 @@
     "data-products",
     "agents",
     "workflows",
-    "tools"
+    "tools",
+    "documentation"
   ],
   "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Alation",
     "shortDescription": "Work with Alation data products, catalogs, agents, tools, and workflows.",
-    "longDescription": "Use Alation from Codex to query data products, search and browse catalog assets, configure AI agents and tools, automate workflows, and curate data products and metadata.",
+    "longDescription": "Use Alation from Codex to query data products, search and browse catalog assets, configure AI agents and tools, automate workflows, curate data products and metadata, and search Alation product and API documentation.",
     "developerName": "Alation AI",
     "category": "Productivity",
     "capabilities": [
@@ -34,7 +36,8 @@
     "defaultPrompt": [
       "Set up my Alation connection.",
       "Find data products related to revenue.",
-      "Query an Alation data product."
+      "Query an Alation data product.",
+      "How do I register an OAuth client in Alation?"
     ],
     "composerIcon": "./assets/alation-icon.png",
     "logo": "./assets/alation-icon.png",

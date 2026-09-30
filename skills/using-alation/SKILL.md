@@ -41,7 +41,8 @@ If the user's request is impossible or misguided, tell them directly.
 | Build workflows, run/schedule recurring jobs | automate |
 | Manage data products, marketplaces, metadata enrichment | curate |
 | Set up or recover credentials/auth | setup |
-| General Alation product help ("how do I...?") | Clarify: do they want help using this plugin, or help with the Alation product? If the product → ask (via `alamigo_agent`) |
+| Alation product or API "how do I...?" questions | Clarify: help using this plugin, or help with the Alation product? If the product → docs (Alation docs MCP). If docs MCP is unavailable → ask (via `alamigo_agent`) |
+| Alation REST API endpoints, schemas, parameters | docs |
 | Unclear/other | Clarify with the user before acting |
 
 **Vague data questions:** If the user asks a data question (e.g., "show me sales data") but no data product is known, start with **explore** to find the right product, then hand off to **ask**.

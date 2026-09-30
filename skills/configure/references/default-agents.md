@@ -167,7 +167,7 @@ Default agents can be used directly or cloned to create custom variations.
 
 ### Alamigo Agent (`alamigo_agent`)
 
-**Purpose:** General help with the Alation product itself (not for data queries).
+**Purpose:** In-product assistant for help with the Alation product itself (not for data queries). For product and API documentation questions, prefer the `docs` skill; use this agent as the fallback when the docs MCP is unavailable.
 
 **Tools:** Broad set of Alation-specific tools.
 
@@ -255,4 +255,4 @@ better suited to your task — run `scripts/run-cli agent list` to see everythin
 | Data products | `data_product_query_agent` |
 | BI reports | `bi_report_agent` |
 | Catalog updates | `curation_agent` |
-| Product help (not data) | `alamigo_agent` |
+| Product help (not data) | `docs` skill first; `alamigo_agent` as fallback |
